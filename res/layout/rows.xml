@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@+id/wineList"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" android:layout_height="?android:attr/listPreferredItemHeight"
+	android:padding="6dip">
+	<LinearLayout android:orientation="vertical"
+		android:layout_width="fill_parent" android:layout_weight="1"
+		android:layout_height="fill_parent">
+
+		<TextView android:id="@+id/rowNameText" android:layout_width="fill_parent"
+			android:layout_height="0dip" android:layout_weight="1"
+			android:gravity="center_vertical" />
+
+		<TextView android:id="@+id/rowCountryText"
+			android:layout_width="fill_parent" android:layout_height="0dip"
+			android:layout_weight="1" android:gravity="center_vertical" />
+
+		<TextView android:id="@+id/rowYearText" android:layout_width="fill_parent"
+			android:layout_height="0dip" android:layout_weight="1"
+			android:gravity="center_vertical" />
+ 
+		<TextView android:id="@+id/rowDescText" android:layout_width="fill_parent"
+			android:layout_height="0dip" android:layout_weight="1"
+			android:gravity="center_vertical" />
+
+		<TextView android:id="@+id/rowRatingText"
+			android:layout_width="fill_parent" android:layout_height="0dip"
+			android:layout_weight="1" android:gravity="center_vertical" />
+
+		<TextView android:id="@+id/rowPriceText"
+			android:layout_width="fill_parent" android:layout_height="0dip"
+			android:layout_weight="1" android:gravity="center_vertical" />
+
+		<TextView android:id="@+id/rowCommentText"
+			android:layout_width="fill_parent" android:layout_height="0dip"
+			android:layout_weight="1" android:gravity="center_vertical" />
+
+	</LinearLayout>
+</LinearLayout>
