@@ -4,4 +4,9 @@
 	<string name="app_name">WineScanner</string>
 	<string name="scan">Scan wine barcode</string>
 	<string name="empty">No wines scanned yet.</string>
+	<string name="winescanner_wine">WineScanner Wine</string>
+	<string name="wine_name">Name</string>
+	<string name="empty_string">" "</string>
+	<string name="wine_country">Country</string>
+	<string name="wine_year">Year</string>
 </resources>

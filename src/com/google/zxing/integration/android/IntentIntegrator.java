@@ -47,7 +47,7 @@ import android.util.Log;
  * <p>There are a few steps to using this integration. First, your {@link Activity} must implement
  * the method {@link Activity#onActivityResult(int, int, Intent)} and include a line of code like this:</p>
  *
- * <pre>{@code
+ * <pre>{@code}
  * public void onActivityResult(int requestCode, int resultCode, Intent intent) {
  *   IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
  *   if (scanResult != null) {
