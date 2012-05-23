@@ -1,74 +1,180 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="fill_parent" android:layout_height="fill_parent">
-	<LinearLayout android:orientation="vertical"
-		android:layout_width="fill_parent" android:layout_height="fill_parent">
-		
-		<TextView android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge"
-			android:text="WineScanner Wine" android:id="@+id/singleWineTitle"
-			android:paddingTop="10px" android:layout_gravity="center"></TextView>
- 
-		<TextView android:textAppearance="?android:attr/textAppearanceMedium"
-			android:id="@+id/barcodeEditName" android:layout_width="wrap_content"
-			android:text="Barcode" android:layout_height="wrap_content"
-			android:paddingTop="10px"></TextView>
-		<EditText android:layout_width="match_parent" android:id="@+id/barcodeEditText" android:layout_height="wrap_content">
-			<requestFocus></requestFocus>
-		</EditText>
-		<TextView android:textAppearance="?android:attr/textAppearanceMedium"
-			android:id="@+id/name" android:layout_width="wrap_content"
-			android:text="Name" android:layout_height="wrap_content"
-			></TextView>
-		<EditText android:layout_width="match_parent" android:id="@+id/nameEditText" android:layout_height="wrap_content">
-			<requestFocus></requestFocus>
-		</EditText>
-			
-		<TextView android:textAppearance="?android:attr/textAppearanceMedium"
-			android:id="@+id/country" android:layout_width="wrap_content"
-			android:text="Country" android:layout_height="wrap_content"></TextView>
-		<EditText android:layout_width="match_parent" android:id="@+id/countryEditText" android:layout_height="wrap_content"></EditText>
-			
-		<TextView android:textAppearance="?android:attr/textAppearanceMedium"
-			android:id="@+id/year" android:layout_width="wrap_content"
-			android:text="Year" android:layout_height="wrap_content"></TextView>
-		<EditText android:layout_width="match_parent" android:id="@+id/yearEditText" android:layout_height="wrap_content" android:inputType="number"></EditText>
-			
-		<TextView android:textAppearance="?android:attr/textAppearanceMedium"
-			android:id="@+id/desc" android:layout_width="wrap_content"
-			android:text="Description" android:layout_height="wrap_content"></TextView>
-		<EditText android:layout_width="match_parent" android:id="@+id/descEditText" android:layout_height="wrap_content" android:inputType="textMultiLine"></EditText>
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
 
-		<TextView android:textAppearance="?android:attr/textAppearanceMedium"
-			android:id="@+id/rating" android:layout_width="wrap_content"
-			android:text="Rating" android:layout_height="wrap_content"></TextView>
-		<EditText android:layout_width="match_parent" android:id="@+id/ratingEditText" android:layout_height="wrap_content" android:inputType="number"></EditText>
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
 
-		<TextView android:textAppearance="?android:attr/textAppearanceMedium"
-			android:id="@+id/price" android:layout_width="wrap_content"
-			android:text="Price" android:layout_height="wrap_content"></TextView>
-		<EditText android:layout_width="match_parent" android:id="@+id/priceEditText" android:layout_height="wrap_content"></EditText>
-			
-		<TextView android:textAppearance="?android:attr/textAppearanceMedium"
-			android:id="@+id/comments" android:layout_width="wrap_content"
-			android:text="Personal comments" android:layout_height="wrap_content"></TextView>
-		<EditText android:layout_width="match_parent" android:id="@+id/commentEditText" android:layout_height="wrap_content" android:inputType="textMultiLine"></EditText>
-		
-		<TextView android:textAppearance="?android:attr/textAppearanceMedium"
-			android:id="@+id/imageURL" android:layout_width="wrap_content"
-			android:text="Image URL" android:layout_height="wrap_content"></TextView>
-		<EditText android:layout_width="match_parent" android:id="@+id/imageEditText" android:layout_height="wrap_content" android:inputType="textMultiLine"></EditText>
+        <TextView
+            android:id="@+id/singleWineTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingTop="10dp"
+            android:text="@string/winescanner_wine"
+            android:textAppearance="?android:attr/textAppearanceLarge" >
+        </TextView>
 
-		<LinearLayout style="@android:style/ButtonBar"
-			android:layout_width="fill_parent" android:layout_height="wrap_content"
-			android:layout_gravity="center_vertical|center_horizontal|center"
-			android:gravity="center_vertical|center_horizontal"
-			android:orientation="horizontal">
+        <TextView
+            android:id="@+id/barcodeEditName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:text="@string/wine_barcode"
+            android:textAppearance="?android:attr/textAppearanceMedium" >
+        </TextView>
 
-			<Button android:layout_width="wrap_content"
-				android:layout_height="wrap_content" android:text="Save"
-				android:id="@+id/saveWine"></Button>
-		</LinearLayout>
-	</LinearLayout>
+        <EditText
+            android:id="@+id/barcodeEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number" >
+
+            <requestFocus>
+            </requestFocus>
+        </EditText>
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/wine_name"
+            android:textAppearance="?android:attr/textAppearanceMedium" >
+        </TextView>
+
+        <EditText
+            android:id="@+id/nameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text" >
+
+            <requestFocus>
+            </requestFocus>
+        </EditText>
+
+        <TextView
+            android:id="@+id/country"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/wine_country"
+            android:textAppearance="?android:attr/textAppearanceMedium" >
+        </TextView>
+
+        <EditText
+            android:id="@+id/countryEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textCapWords" >
+        </EditText>
+
+        <TextView
+            android:id="@+id/year"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/wine_year"
+            android:textAppearance="?android:attr/textAppearanceMedium" >
+        </TextView>
+
+        <EditText
+            android:id="@+id/yearEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number" >
+        </EditText>
+
+        <TextView
+            android:id="@+id/desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/wine_description"
+            android:textAppearance="?android:attr/textAppearanceMedium" >
+        </TextView>
+
+        <EditText
+            android:id="@+id/descEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine" >
+        </EditText>
+
+        <TextView
+            android:id="@+id/rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/wine_rating"
+            android:textAppearance="?android:attr/textAppearanceMedium" >
+        </TextView>
+
+        <EditText
+            android:id="@+id/ratingEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number" >
+        </EditText>
+
+        <TextView
+            android:id="@+id/price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/wine_price"
+            android:textAppearance="?android:attr/textAppearanceMedium" >
+        </TextView>
+
+        <EditText
+            android:id="@+id/priceEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal" >
+        </EditText>
+
+        <TextView
+            android:id="@+id/comments"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/wine_personal_comments"
+            android:textAppearance="?android:attr/textAppearanceMedium" >
+        </TextView>
+
+        <EditText
+            android:id="@+id/commentEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine" >
+        </EditText>
+
+        <TextView
+            android:id="@+id/imageURL"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/wine_image_url"
+            android:textAppearance="?android:attr/textAppearanceMedium" >
+        </TextView>
+
+        <EditText
+            android:id="@+id/imageEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine" >
+        </EditText>
+
+        <LinearLayout
+            style="@android:style/ButtonBar"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|center_horizontal|center"
+            android:gravity="center_vertical|center_horizontal"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/saveWine"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/wine_save_btn_text" >
+            </Button>
+        </LinearLayout>
+    </LinearLayout>
 
 </ScrollView>

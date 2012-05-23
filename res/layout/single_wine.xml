@@ -5,7 +5,6 @@
     android:orientation="vertical" >
 
     <ScrollView
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" >
 
@@ -74,7 +73,7 @@
                 android:id="@+id/desc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Description"
+                android:text="@string/wine_description"
                 android:textAppearance="?android:attr/textAppearanceMedium" >
             </TextView>
 
@@ -89,7 +88,7 @@
                 android:id="@+id/rating"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Rating"
+                android:text="@string/wine_rating"
                 android:textAppearance="?android:attr/textAppearanceMedium" >
             </TextView>
 
@@ -104,7 +103,7 @@
                 android:id="@+id/price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Price"
+                android:text="@string/wine_price"
                 android:textAppearance="?android:attr/textAppearanceMedium" >
             </TextView>
 
@@ -119,7 +118,7 @@
                 android:id="@+id/comments"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Personal comments"
+                android:text="@string/wine_personal_comments"
                 android:textAppearance="?android:attr/textAppearanceMedium" >
             </TextView>
 
@@ -136,7 +135,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:contentDescription="A picture of this bottle of wine."
+                android:contentDescription="@string/wine_picture_description"
                 android:paddingBottom="10dp"
                 android:scaleType="center" />
         </LinearLayout>
@@ -154,7 +153,7 @@
             android:id="@+id/editWine"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Edit this wine" >
+            android:text="@string/edit_wine_btn_text" >
         </Button>
     </RelativeLayout>
 
