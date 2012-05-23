@@ -286,12 +286,4 @@ public class WineScannerAndroidActivity extends ListActivity {
 
     return true;
   }
-
-  public void onSetData(View v) {
-    this.wineAdapter.changeData(wineList);
-  }
-
-  public void onSetEmpty(View v) {
-    this.wineAdapter.changeData(wineList);
-  }
 }
