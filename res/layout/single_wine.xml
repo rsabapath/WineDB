@@ -136,7 +136,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:contentDescription="@string/wine_picture_description"
-                android:paddingBottom="10dp"
+                android:paddingBottom="60dp"
                 android:scaleType="center" />
         </LinearLayout>
     </ScrollView>

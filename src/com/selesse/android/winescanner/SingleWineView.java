@@ -74,7 +74,9 @@ public class SingleWineView extends Activity {
       bmOptions = new BitmapFactory.Options();
       bmOptions.inSampleSize = 1;
       Bitmap bm = LoadImage(wine.getImageURL(), bmOptions);
-      image.setImageBitmap(bm);
+      if (bm != null)
+        image.setImageBitmap(bm);
+      // TODO make this run in a separate thread
     }
   }
 
@@ -83,20 +85,23 @@ public class SingleWineView extends Activity {
     InputStream in = null;
     try {
       in = OpenHttpConnection(URL);
+      if (in == null)
+        return bitmap;
       bitmap = BitmapFactory.decodeStream(in, null, options);
       in.close();
     }
     catch (IOException e1) {
+
     }
     return bitmap;
   }
 
-  private InputStream OpenHttpConnection(String strURL) throws IOException {
+  private InputStream OpenHttpConnection(String strURL) {
     InputStream inputStream = null;
-    URL url = new URL(strURL);
-    URLConnection conn = url.openConnection();
-
     try {
+      URL url = new URL(strURL);
+      URLConnection conn = url.openConnection();
+
       HttpURLConnection httpConn = (HttpURLConnection) conn;
       httpConn.setRequestMethod("GET");
       httpConn.connect();
@@ -104,10 +109,12 @@ public class SingleWineView extends Activity {
       if (httpConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
         inputStream = httpConn.getInputStream();
       }
+
     }
-    catch (Exception ex) {
+    catch (IOException e) {
+
     }
+
     return inputStream;
   }
-
 }

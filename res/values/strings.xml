@@ -15,7 +15,7 @@
     <string name="wine_price">Price</string>
     <string name="wine_personal_comments">Personal comments</string>
     <string name="wine_picture_description">A picture of this bottle of wine.</string>
-    <string name="wine_image_url">Wine Image URL</string>
+    <string name="wine_image_url">Wine image URL</string>
     <string name="edit_wine_btn_text">Edit this wine</string>
     <string name="wine_save_btn_text">Save</string>
     <string name="generic_placeholder_wine_bottle_picture_">Generic placeholder wine bottle picture.</string>

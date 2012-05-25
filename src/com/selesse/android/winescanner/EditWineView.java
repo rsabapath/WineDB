@@ -18,9 +18,9 @@ public class EditWineView extends Activity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
 
-    Bundle b = this.getIntent().getExtras();
-    if (b != null) {
-      wine = (Wine) b.getSerializable("wine");
+    Bundle bundle = this.getIntent().getExtras();
+    if (bundle != null) {
+      wine = (Wine) bundle.getSerializable("wine");
       editMode = true;
     }
     else {
