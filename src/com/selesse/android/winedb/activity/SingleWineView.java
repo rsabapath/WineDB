@@ -1,4 +1,4 @@
-package com.selesse.android.winescanner;
+package com.selesse.android.winedb.activity;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,6 +16,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.selesse.android.winedb.R;
+import com.selesse.android.winedb.model.Wine;
 
 public class SingleWineView extends Activity {
   Wine wine = null;
@@ -50,21 +53,21 @@ public class SingleWineView extends Activity {
       }
     });
 
-    if (wine.getName() != null && !wine.getName().equals("null"))
+    if (wine.getName() != null && !wine.getName().equals(""))
       nameText.setText(wine.getName());
-    if (wine.getCountry() != null && !wine.getCountry().equals("null"))
+    if (wine.getCountry() != null && !wine.getCountry().equals(""))
       countryText.setText(wine.getCountry());
-    if (!wine.getYear().equals("null"))
+    if (wine.getYear() > 1500)
       yearText.setText(String.valueOf(wine.getYear()));
-    if (wine.getDescription() != null && !wine.getDescription().equals("null"))
+    if (wine.getDescription() != null && !wine.getDescription().equals(""))
       descText.setText(wine.getDescription());
-    if (!wine.getRating().equals("null"))
+    if (wine.getRating() > 0)
       ratingText.setText(String.valueOf(wine.getRating()));
     else
       ratingText.setText("Unrated");
-    if (!wine.getPrice().equals("null"))
+    if (!wine.getPrice().equals(""))
       priceText.setText(wine.getPrice());
-    if (wine.getComment() != null && !wine.getComment().equals("null"))
+    if (wine.getComment() != null && !wine.getComment().equals(""))
       commentText.setText(wine.getComment());
     else
       commentText.setText("No comments yet.");

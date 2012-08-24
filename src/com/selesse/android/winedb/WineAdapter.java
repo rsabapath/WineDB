@@ -1,6 +1,9 @@
-package com.selesse.android.winescanner;
+package com.selesse.android.winedb;
 
 import java.util.ArrayList;
+
+import com.selesse.android.winedb.R;
+import com.selesse.android.winedb.model.Wine;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -41,8 +44,8 @@ public class WineAdapter extends ArrayAdapter<Wine> {
       v = vi.inflate(R.layout.rows, null);
     }
     Wine o = wine.get(position);
-    if (o != null) {
 
+    if (o != null) {
       TextView nameView = (TextView) v.findViewById(R.id.rowNameText);
       nameView.setTag(position);
       TextView countryView = (TextView) v.findViewById(R.id.rowCountryText);
@@ -54,32 +57,12 @@ public class WineAdapter extends ArrayAdapter<Wine> {
 
       // TODO bad practice, should fix this
       nameView.setText(o.getName().substring(0, Math.min(45, o.getName().length())));
-      if (o.getCountry().equals("null"))
-        countryView.setVisibility(View.GONE);
-      else
-        countryView.setText(o.getCountry());
-      if (o.getYear().equals("null"))
-        yearView.setVisibility(View.GONE);
-      else
-        yearView.setText(o.getYear());
-      if (o.getDescription().equals("null"))
-        descView.setVisibility(View.GONE);
-      else
-        descView.setText(o.getDescription().substring(0, Math.min(45, o.getDescription().length())));
-
-      if (o.getRating().equals("null"))
-        ratingView.setVisibility(View.GONE);
-      else
-        ratingView.setText(o.getRating());
-
-      if (o.getPrice().equals("null"))
-        priceView.setVisibility(View.GONE);
-      else
-        priceView.setText(o.getPrice());
-      if (o.getComment().equals("null"))
-        commentView.setVisibility(View.GONE);
-      else
-        commentView.setText(o.getComment().substring(0, Math.min(45, o.getComment().length())));
+      countryView.setText(o.getCountry());
+      yearView.setText(o.getYear());
+      descView.setText(o.getDescription().substring(0, Math.min(45, o.getDescription().length())));
+      ratingView.setText(o.getRating());
+      priceView.setText(o.getPrice());
+      commentView.setText(o.getComment().substring(0, Math.min(45, o.getComment().length())));
     }
     return v;
   }

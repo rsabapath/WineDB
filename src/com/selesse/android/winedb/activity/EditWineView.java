@@ -1,6 +1,4 @@
-package com.selesse.android.winescanner;
-
-import com.selesse.android.winescanner.R;
+package com.selesse.android.winedb.activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -8,6 +6,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
+import com.selesse.android.winedb.R;
+import com.selesse.android.winedb.model.Wine;
 
 public class EditWineView extends Activity {
 
@@ -42,23 +43,23 @@ public class EditWineView extends Activity {
     imageText = (EditText) findViewById(R.id.imageEditText);
 
     if (editMode) {
-      if (!wine.getBarcode().equals("null"))
+      if (!wine.getBarcode().equals(""))
         barcodeText.setText(wine.getBarcode());
-      if (!wine.getName().equals("null"))
+      if (!wine.getName().equals(""))
         nameText.setText(wine.getName());
-      if (!wine.getCountry().equals("null"))
+      if (!wine.getCountry().equals(""))
         countryText.setText(wine.getCountry());
-      if (!wine.getYear().equals("null"))
+      if (wine.getYear() > 0 && wine.getYear() < 2500)
         yearText.setText(String.valueOf(wine.getYear()));
-      if (!wine.getDescription().equals("null"))
+      if (!wine.getDescription().equals(""))
         descText.setText(wine.getDescription());
-      if (!wine.getRating().equals("null"))
+      if (wine.getRating() > 0 && wine.getRating() < 11)
         ratingText.setText(String.valueOf(wine.getRating()));
-      if (!wine.getPrice().equals("null"))
+      if (!wine.getPrice().equals(""))
         priceText.setText(wine.getPrice());
-      if (!wine.getComment().equals("null"))
+      if (!wine.getComment().equals(""))
         commentText.setText(wine.getComment());
-      if (!wine.getImageURL().equals("null"))
+      if (!wine.getImageURL().equals(""))
         imageText.setText(wine.getImageURL());
     }
 
@@ -69,48 +70,30 @@ public class EditWineView extends Activity {
       public void onClick(View v) {
         if (barcodeText.getText().toString().length() > 0)
           wine.setBarcode(barcodeText.getText().toString());
-        else
-          wine.setBarcode("null");
 
         if (nameText.getText().toString().length() > 0)
           wine.setName(nameText.getText().toString());
-        else
-          wine.setName("null");
 
         if (countryText.getText().toString().length() > 0)
           wine.setCountry(countryText.getText().toString());
-        else
-          wine.setCountry("null");
 
         if (yearText.getText().toString().length() > 0)
-          wine.setYear(yearText.getText().toString());
-        else
-          wine.setYear("null");
+          wine.setYear(Integer.parseInt(yearText.getText().toString()));
 
         if (descText.getText().toString().length() > 0)
           wine.setDescription(descText.getText().toString());
-        else
-          wine.setDescription("null");
 
         if (ratingText.getText().toString().length() > 0)
-          wine.setRating(ratingText.getText().toString());
-        else
-          wine.setRating("null");
+          wine.setRating(Integer.parseInt(ratingText.getText().toString()));
 
         if (priceText.getText().toString().length() > 0)
           wine.setPrice(priceText.getText().toString());
-        else
-          wine.setPrice("null");
 
         if (commentText.getText().toString().length() > 0)
           wine.setComment(commentText.getText().toString());
-        else
-          wine.setComment("null");
 
         if (imageText.getText().toString().length() > 0)
           wine.setImageURL(imageText.getText().toString());
-        else
-          wine.setImageURL("null");
 
         Intent data = new Intent();
         data.putExtra("Wine", wine);

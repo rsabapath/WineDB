@@ -1,24 +1,37 @@
-package com.selesse.android.winescanner;
+package com.selesse.android.winedb.model;
 
 import java.io.Serializable;
 
-public class Wine implements Serializable, Comparable<Wine> {
-  /**
-	 * 
-	 */
+public class Wine implements Serializable {
+
   private static final long serialVersionUID = 231532486466908646L;
-  public String barcode;
-  public String name;
-  public String rating;
-  public String comment;
-  public String country;
-  public String description;
-  public String imageURL;
-  public String price;
-  public String year;
+  private String barcode;
+  private String name;
+  private int rating;
+  private String comment;
+  private String country;
+  private String description;
+  private String imageURL;
+  private String price;
+  private int year;
+  private WineColor color;
+
+  public enum WineColor {
+    RED("Red"), WHITE("White"), ROSE("Rose");
+
+    String name;
+
+    private WineColor(String name) {
+      this.name = name;
+    }
+
+    public String toString() {
+      return name;
+    }
+  }
 
   public Wine() {
-
+    
   }
 
   public Wine(String barcode, String name, String price, String description) {
@@ -26,13 +39,6 @@ public class Wine implements Serializable, Comparable<Wine> {
     this.name = name;
     this.price = price;
     this.description = description;
-
-    this.rating = "null";
-    this.comment = "null";
-    this.country = "null";
-    this.year = "null";
-    this.imageURL = "null";
-
   }
 
   public String getCountry() {
@@ -59,11 +65,11 @@ public class Wine implements Serializable, Comparable<Wine> {
     this.name = name;
   }
 
-  public String getRating() {
+  public int getRating() {
     return rating;
   }
 
-  public void setRating(String rating) {
+  public void setRating(int rating) {
     this.rating = rating;
   }
 
@@ -75,11 +81,11 @@ public class Wine implements Serializable, Comparable<Wine> {
     this.comment = comment;
   }
 
-  public String getYear() {
+  public int getYear() {
     return year;
   }
 
-  public void setYear(String year) {
+  public void setYear(int year) {
     this.year = year;
   }
 
@@ -107,16 +113,12 @@ public class Wine implements Serializable, Comparable<Wine> {
     this.price = price;
   }
 
-  @Override
-  public String toString() {
-    return "Wine [barcode=" + barcode + ", name=" + name + ", rating=" + rating + ", comment=" + comment + ", country="
-        + country + ", description=" + description + ", imageURL=" + imageURL + ", price=" + price + ", year=" + year
-        + "]";
+  public WineColor getColor() {
+    return color;
   }
 
-  @Override
-  public int compareTo(Wine another) {
-    return this.getName().compareTo(another.getName());
+  public void setColor(WineColor color) {
+    this.color = color;
   }
 
 }

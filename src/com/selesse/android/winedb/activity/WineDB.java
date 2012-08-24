@@ -1,4 +1,4 @@
-package com.selesse.android.winescanner;
+package com.selesse.android.winedb.activity;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,6 +9,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,10 +32,16 @@ import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import com.selesse.android.winedb.FileManager;
+import com.selesse.android.winedb.R;
+import com.selesse.android.winedb.WineAdapter;
+import com.selesse.android.winedb.model.RequestCode;
+import com.selesse.android.winedb.model.Wine;
+import com.selesse.android.winedb.model.WineContextMenu;
 
-public class WineScannerAndroidActivity extends ListActivity {
+public class WineDB extends ListActivity {
 
-  public ArrayList<Wine> wineList;
+  private ArrayList<Wine> wineList;
   private WineAdapter wineAdapter;
   public Wine tempWine;
 
@@ -57,15 +64,13 @@ public class WineScannerAndroidActivity extends ListActivity {
     lv.setOnItemClickListener(new OnItemClickListener() {
       @Override
       public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
         // get the wine at that position and pass it to the view single
         // wine activity
         Wine displayedWine = wineList.get(position);
 
-        Intent i = new Intent(activity, SingleWineView.class);
-        i.putExtra("wine", displayedWine);
-        startActivity(i);
-
+        Intent intent = new Intent(activity, SingleWineView.class);
+        intent.putExtra("wine", displayedWine);
+        startActivity(intent);
       }
     });
 
@@ -78,8 +83,10 @@ public class WineScannerAndroidActivity extends ListActivity {
         int id = (int) info.id;
 
         menu.setHeaderTitle(wineList.get(id).getName().substring(0, Math.min(wineList.get(id).getName().length(), 22)));
-        menu.add(0, id, 0, "Edit");
-        menu.add(0, id, 1, "Delete");
+
+        for (WineContextMenu contextMenuItem : WineContextMenu.values()) {
+          menu.add(0, id, contextMenuItem.ordinal(), contextMenuItem.toString());
+        }
 
       }
     });
@@ -92,7 +99,6 @@ public class WineScannerAndroidActivity extends ListActivity {
       public void onClick(View v) {
         IntentIntegrator integrator = new IntentIntegrator(activity);
         integrator.initiateScan();
-
       }
     });
 
@@ -100,35 +106,37 @@ public class WineScannerAndroidActivity extends ListActivity {
 
   @Override
   public boolean onContextItemSelected(MenuItem item) {
+    super.onContextItemSelected(item);
+
     AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
 
     int wineID = (int) info.id;
 
-    // action is 0 for edit, 1 for delete... there is definitely an OO
-    // procedure I'm not following
-    String action = item.getOrder() == 0 ? "Edit" : "Delete";
+    WineContextMenu selectedItem = WineContextMenu.values()[item.getOrder()];
 
-    if (action.equals("Delete")) {
-      String name = wineList.get(wineID).getName();
-      FileManager.deleteWine(wineID);
-      wineAdapter.notifyDataSetChanged();
-      Toast.makeText(this, "Deleted " + name.substring(0, Math.min(40, name.length())), Toast.LENGTH_SHORT).show();
-    }
-    else if (action.equals("Edit")) {
-      Intent i = new Intent(this, EditWineView.class);
-      i.putExtra("wine", wineList.get(wineID));
-      tempWine = wineList.remove(wineID);
-      startActivityForResult(i, 3);
+    switch (selectedItem) {
+      case DELETE:
+        String name = wineList.get(wineID).getName();
+        FileManager.deleteWine(wineID);
+        wineAdapter.notifyDataSetChanged();
+        Toast.makeText(this, "Deleted " + name.substring(0, Math.min(40, name.length())), Toast.LENGTH_SHORT).show();
+      case EDIT:
+        Intent i = new Intent(this, EditWineView.class);
+        i.putExtra("wine", wineList.get(wineID));
+        tempWine = wineList.remove(wineID);
+        startActivityForResult(i, RequestCode.DELETE_THEN_EDIT.ordinal());
     }
 
     return true;
   }
 
   @Override
-  public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-    IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+  public void onActivityResult(int requestCodeNumber, int resultCode, Intent intent) {
+    IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCodeNumber, resultCode, intent);
 
-    if (requestCode == 2 || requestCode == 3) {
+    RequestCode requestCode = RequestCode.values()[requestCodeNumber];
+
+    if (requestCode == RequestCode.EDIT_WINE || requestCode == RequestCode.DELETE_THEN_EDIT) {
       // this is a returned wine
       if (resultCode == RESULT_OK) {
         Bundle bundle = intent.getExtras();
@@ -138,13 +146,11 @@ public class WineScannerAndroidActivity extends ListActivity {
         return;
       }
       else {
-        if (requestCode == 3) {
+        if (requestCode == RequestCode.DELETE_THEN_EDIT) {
           FileManager.addWine(tempWine);
           wineAdapter.notifyDataSetChanged();
           return;
         }
-        // Toast.makeText(this, "Result was bad!",
-        // Toast.LENGTH_LONG).show();
         return;
       }
     }
@@ -179,13 +185,13 @@ public class WineScannerAndroidActivity extends ListActivity {
             Wine newWine = new Wine(barcodeNumber, "null", "null", "null");
             Intent i = new Intent(this, EditWineView.class);
             i.putExtra("wine", newWine);
-            startActivityForResult(i, 2);
+            startActivityForResult(i, RequestCode.EDIT_WINE.ordinal());
           }
           else if (contents.get(0).startsWith("UPCDB")) {
             Wine newWine = new Wine(barcodeNumber, contents.get(1), "null", "null");
             Intent i = new Intent(this, EditWineView.class);
             i.putExtra("wine", newWine);
-            startActivityForResult(i, 2);
+            startActivityForResult(i, RequestCode.EDIT_WINE.ordinal());
           }
           else {
             String wineName = contents.get(0);
@@ -207,7 +213,7 @@ public class WineScannerAndroidActivity extends ListActivity {
                 Matcher m = p.matcher(line);
 
                 if (m.find()) {
-                  newWine.setYear(m.group(0));
+                  newWine.setYear(Integer.parseInt(m.group(0)));
                 }
               }
 
@@ -229,7 +235,7 @@ public class WineScannerAndroidActivity extends ListActivity {
 
             Intent i = new Intent(this, EditWineView.class);
             i.putExtra("wine", newWine);
-            startActivityForResult(i, 2);
+            startActivityForResult(i, RequestCode.EDIT_WINE.ordinal());
           }
         }
         catch (MalformedURLException e) {
@@ -276,12 +282,17 @@ public class WineScannerAndroidActivity extends ListActivity {
     }
     else if (item.getTitle().equals("Sort")) {
       // TODO sort by name works for now, let's do rest later
-      Collections.sort(wineList);
+      Collections.sort(wineList, new Comparator<Wine>() {
+        @Override
+        public int compare(Wine wine1, Wine wine2) {
+          return wine1.getName().compareTo(wine2.getName());
+        }
+      });
       wineAdapter.notifyDataSetChanged();
     }
     else if (item.getTitle().equals("Add wine")) {
       Intent i = new Intent(this, EditWineView.class);
-      startActivityForResult(i, 2);
+      startActivityForResult(i, RequestCode.EDIT_WINE.ordinal());
     }
 
     return true;

@@ -1,28 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="com.selesse.android.winescanner" android:versionCode="1"
-	android:versionName="1.0">
-	<uses-sdk android:minSdkVersion="8" android:targetSdkVersion="8" />
-  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-  <uses-permission android:name="android.permission.INTERNET" />
-	<application android:icon="@drawable/icon" android:label="@string/app_name">
-		<activity android:name=".WineScannerAndroidActivity"
-			android:theme="@android:style/Theme.NoTitleBar" android:label="@string/app_name"
-			android:configChanges="orientation|keyboardHidden">
-			<intent-filter>
-				<action android:name="android.intent.action.MAIN" />
-				<category android:name="android.intent.category.LAUNCHER" />
-			</intent-filter>
-			<intent-filter>
-				<action android:name="com.google.zxing.client.android.SCAN" />
-				<category android:name="android.intent.category.DEFAULT" />
-			</intent-filter>
-		</activity>
-		<activity android:name=".SingleWineView" android:theme="@android:style/Theme.NoTitleBar"
-			android:screenOrientation="portrait">
-		</activity>
-		<activity android:name="com.selesse.android.winescanner.EditWineView" android:theme="@android:style/Theme.NoTitleBar">
-		</activity>
-	</application>
+    package="com.selesse.android.winedb"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="8"
+        android:targetSdkVersion="8" />
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:icon="@drawable/icon"
+        android:label="@string/app_name" >
+        <activity
+            android:name=".activity.WineDB"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.NoTitleBar" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.google.zxing.client.android.SCAN" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.SingleWineView"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
+            android:name=".activity.EditWineView"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+    </application>
 
 </manifest>
