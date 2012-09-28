@@ -1,62 +1,44 @@
 package com.selesse.android.winedb;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import com.selesse.android.winedb.model.Wine;
 
+
 /**
- * The FileManager for the WineScanner application. This class essentially keeps
- * a {@link java.util.List} of Wine objects, loads it and saves it to a file.
+ * The file manager interface for the WineScanner application.
  * 
- * @author Selesse
+ * @author Alex Selesse
  */
-public class FileManager {
-  // FIXME add some sort of preference and smarter way of saving - assume that
-  // we are in debug mode for now
-  public final static String WINEDB_LOCATION = "/sdcard/winescanner/";
-  public final static String WINEDB_FILE = "wineDB";
-  public static List<Wine> wineList;
+public interface FileManager {
 
   /**
-   * Loads the ArrayList of Wines given the WINEDB_LOCATION and WINEDB_FILE.
+   * Loads an ArrayList of Wine objects, if it exists.
    * 
    * @return The loaded ArrayList of Wine objects, if such a list exists,
-   *         otherwise an empty List.
+   *         otherwise an empty ArrayList.
    */
-  public static ArrayList<Wine> loadWine() {
-    return new ArrayList<Wine>();
-  }
+  public ArrayList<Wine> loadWineList();
 
   /**
-   * Find the wine at a particular position, take note of its barcode. Go
-   * through the list of wines, one by one, writing to a temporary ArrayList. If
-   * you come across the old barcode, skip it. This is kind of a silly way of
-   * doing it. TODO refactor this.
+   * Remove a particular {@link com.selesse.android.winedb.model.Wine} from the
+   * list of wines.
    * 
-   * @param position
-   *          The position of the deleted wine in the ArrayList.
+   * @param delete_wine
+   *          The Wine object to be deleted.
    */
-  public static void deleteWine(int position) {
-
-  }
+  public void deleteWine(Wine delete_wine);
 
   /**
-   * Adds a wine to the master list and saves to the file.
+   * Adds a wine to the master list.
    * 
    * @param newWine
-   *          The new Wine object to add to the static wine list.
+   *          The new Wine object to add to the master wine list.
    */
-  public static void addWine(Wine newWine) {
-    wineList.add(newWine);
-    saveFile();
-  }
+  public void addWine(Wine newWine);
 
   /**
-   * Saves the static ArrayList of wines to the location.
+   * Saves the wines.
    */
-  public static void saveFile() {
-    
-  }
-
+  public void saveWines();
 }

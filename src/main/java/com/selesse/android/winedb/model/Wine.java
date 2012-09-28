@@ -2,6 +2,12 @@ package com.selesse.android.winedb.model;
 
 import java.io.Serializable;
 
+/**
+ * Model class for a wine object.
+ * 
+ * @author Alex Selesse
+ *
+ */
 public class Wine implements Serializable {
 
   private static final long serialVersionUID = 231532486466908646L;

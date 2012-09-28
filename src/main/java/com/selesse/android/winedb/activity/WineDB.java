@@ -35,6 +35,7 @@ import com.google.zxing.integration.android.IntentResult;
 import com.selesse.android.winedb.FileManager;
 import com.selesse.android.winedb.R;
 import com.selesse.android.winedb.WineAdapter;
+import com.selesse.android.winedb.impl.FileManagerImpl;
 import com.selesse.android.winedb.model.RequestCode;
 import com.selesse.android.winedb.model.Wine;
 import com.selesse.android.winedb.model.WineContextMenu;
@@ -44,13 +45,16 @@ public class WineDB extends ListActivity {
   private ArrayList<Wine> wineList;
   private WineAdapter wineAdapter;
   public Wine tempWine;
+  private FileManager fileManager;
 
   /** Called when the activity is first created. */
   @Override
   public void onCreate(Bundle savedInstanceState) {
     final Activity activity = this;
+    
+    fileManager = new FileManagerImpl();
 
-    wineList = FileManager.loadWine();
+    wineList = fileManager.loadWineList();
 
     super.onCreate(savedInstanceState);
     setContentView(R.layout.main);
@@ -116,10 +120,10 @@ public class WineDB extends ListActivity {
 
     switch (selectedItem) {
       case DELETE:
-        String name = wineList.get(wineID).getName();
-        FileManager.deleteWine(wineID);
+        Wine delete_wine = wineList.get(wineID);
+        fileManager.deleteWine(delete_wine);
         wineAdapter.notifyDataSetChanged();
-        Toast.makeText(this, "Deleted " + name.substring(0, Math.min(40, name.length())), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Deleted " + delete_wine.getName().substring(0, Math.min(40, delete_wine.getName().length())), Toast.LENGTH_SHORT).show();
       case EDIT:
         Intent i = new Intent(this, EditWineView.class);
         i.putExtra("wine", wineList.get(wineID));
@@ -141,13 +145,13 @@ public class WineDB extends ListActivity {
       if (resultCode == RESULT_OK) {
         Bundle bundle = intent.getExtras();
         Wine w = (Wine) bundle.get("Wine");
-        FileManager.addWine(w);
+        fileManager.addWine(w);
         wineAdapter.notifyDataSetChanged();
         return;
       }
       else {
         if (requestCode == RequestCode.DELETE_THEN_EDIT) {
-          FileManager.addWine(tempWine);
+          fileManager.addWine(tempWine);
           wineAdapter.notifyDataSetChanged();
           return;
         }
