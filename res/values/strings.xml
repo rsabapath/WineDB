@@ -19,5 +19,7 @@
     <string name="edit_wine_btn_text">Edit this wine</string>
     <string name="wine_save_btn_text">Save</string>
     <string name="generic_placeholder_wine_bottle_picture_">Generic placeholder wine bottle picture.</string>
+    <string name="picture_of_the_wine">Picture of the wine.</string>
+    <string name="wine_color_label">Wine color</string>
 
 </resources>

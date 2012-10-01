@@ -4,16 +4,20 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 import com.selesse.android.winedb.R;
 import com.selesse.android.winedb.model.Wine;
+import com.selesse.android.winedb.model.Wine.WineColor;
 
 public class EditWineView extends Activity {
 
   Wine wine = null;
   EditText barcodeText, nameText, countryText, yearText, descText, ratingText, priceText, commentText, imageText;
+  Spinner spinner;
   boolean editMode;
 
   @Override
@@ -42,6 +46,12 @@ public class EditWineView extends Activity {
     commentText = (EditText) findViewById(R.id.commentEditText);
     imageText = (EditText) findViewById(R.id.imageEditText);
 
+    spinner = (Spinner) findViewById(R.id.wineColorSpinner);
+    ArrayAdapter<WineColor> spinnerArrayAdapter = new ArrayAdapter<WineColor>(this, android.R.layout.simple_spinner_item,
+        Wine.WineColor.values());
+    spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+    spinner.setAdapter(spinnerArrayAdapter);
+
     if (editMode) {
       if (!wine.getBarcode().equals(""))
         barcodeText.setText(wine.getBarcode());
@@ -61,6 +71,8 @@ public class EditWineView extends Activity {
         commentText.setText(wine.getComment());
       if (!wine.getImageURL().equals(""))
         imageText.setText(wine.getImageURL());
+      if (wine.getColor() != WineColor.UNKNOWN)
+        spinner.setSelection(wine.getColor().ordinal());
     }
 
     Button save = (Button) findViewById(R.id.saveWine);
@@ -94,6 +106,9 @@ public class EditWineView extends Activity {
 
         if (imageText.getText().toString().length() > 0)
           wine.setImageURL(imageText.getText().toString());
+        
+        if (spinner.getSelectedItemPosition() > 0)
+          wine.setColor(WineColor.values()[spinner.getSelectedItemPosition()]);
 
         Intent data = new Intent();
         data.putExtra("Wine", wine);

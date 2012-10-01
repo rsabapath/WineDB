@@ -2,15 +2,14 @@ package com.selesse.android.winedb;
 
 import java.util.ArrayList;
 
-import com.selesse.android.winedb.R;
-import com.selesse.android.winedb.model.Wine;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
+import com.selesse.android.winedb.model.Wine;
 
 public class WineAdapter extends ArrayAdapter<Wine> {
 
@@ -46,23 +45,19 @@ public class WineAdapter extends ArrayAdapter<Wine> {
     Wine o = wine.get(position);
 
     if (o != null) {
-      TextView nameView = (TextView) v.findViewById(R.id.rowNameText);
-      nameView.setTag(position);
-      TextView countryView = (TextView) v.findViewById(R.id.rowCountryText);
-      TextView yearView = (TextView) v.findViewById(R.id.rowYearText);
-      TextView descView = (TextView) v.findViewById(R.id.rowDescText);
-      TextView ratingView = (TextView) v.findViewById(R.id.rowRatingText);
-      TextView priceView = (TextView) v.findViewById(R.id.rowPriceText);
-      TextView commentView = (TextView) v.findViewById(R.id.rowCommentText);
-
-      // TODO bad practice, should fix this
-      nameView.setText(o.getName().substring(0, Math.min(45, o.getName().length())));
-      countryView.setText(o.getCountry());
-      yearView.setText(o.getYear());
-      descView.setText(o.getDescription().substring(0, Math.min(45, o.getDescription().length())));
-      ratingView.setText(o.getRating());
-      priceView.setText(o.getPrice());
-      commentView.setText(o.getComment().substring(0, Math.min(45, o.getComment().length())));
+      TextView nameTextView = (TextView) v.findViewById(R.id.name);
+      TextView countryTextView = (TextView) v.findViewById(R.id.country);
+      TextView wineColorTextView = (TextView) v.findViewById(R.id.wine_color);
+      TextView yearTextView = (TextView) v.findViewById(R.id.year);
+      TextView ratingTextView = (TextView) v.findViewById(R.id.rating);
+      
+      nameTextView.setText(o.getName());
+      countryTextView.setText(o.getCountry());
+      wineColorTextView.setText(o.getColor().toString());
+      if (o.getYear() > 0)
+        yearTextView.setText(o.getYear() + "");
+      if (o.getRating() > 0)
+        ratingTextView.setText(o.getRating() + "");
     }
     return v;
   }

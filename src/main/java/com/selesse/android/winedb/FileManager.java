@@ -13,14 +13,6 @@ import com.selesse.android.winedb.model.Wine;
 public interface FileManager {
 
   /**
-   * Loads an ArrayList of Wine objects, if it exists.
-   * 
-   * @return The loaded ArrayList of Wine objects, if such a list exists,
-   *         otherwise an empty ArrayList.
-   */
-  public ArrayList<Wine> loadWineList();
-
-  /**
    * Remove a particular {@link com.selesse.android.winedb.model.Wine} from the
    * list of wines.
    * 
@@ -41,4 +33,6 @@ public interface FileManager {
    * Saves the wines.
    */
   public void saveWines();
+
+  public ArrayList<Wine> getWineList();
 }

@@ -32,9 +32,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="number" >
-
-            <requestFocus>
-            </requestFocus>
         </EditText>
 
         <TextView
@@ -51,8 +48,7 @@
             android:layout_height="wrap_content"
             android:inputType="text" >
 
-            <requestFocus>
-            </requestFocus>
+            <requestFocus />
         </EditText>
 
         <TextView
@@ -71,6 +67,19 @@
         </EditText>
 
         <TextView
+            android:id="@+id/wineColorLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/wine_color_label"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <Spinner
+            android:id="@+id/wineColorSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14pt" />
+
+        <TextView
             android:id="@+id/year"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -80,6 +89,21 @@
 
         <EditText
             android:id="@+id/yearEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number" >
+        </EditText>
+
+        <TextView
+            android:id="@+id/rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/wine_rating"
+            android:textAppearance="?android:attr/textAppearanceMedium" >
+        </TextView>
+
+        <EditText
+            android:id="@+id/ratingEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="number" >
@@ -98,21 +122,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textMultiLine" >
-        </EditText>
-
-        <TextView
-            android:id="@+id/rating"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/wine_rating"
-            android:textAppearance="?android:attr/textAppearanceMedium" >
-        </TextView>
-
-        <EditText
-            android:id="@+id/ratingEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="number" >
         </EditText>
 
         <TextView

@@ -6,24 +6,101 @@ import java.io.Serializable;
  * Model class for a wine object.
  * 
  * @author Alex Selesse
- *
+ * 
  */
 public class Wine implements Serializable {
 
   private static final long serialVersionUID = 231532486466908646L;
-  private String barcode;
-  private String name;
-  private int rating;
-  private String comment;
-  private String country;
-  private String description;
-  private String imageURL;
-  private String price;
-  private int year;
-  private WineColor color;
+  private String barcode = "";
+  private String name = "";
+  private int rating = -1;
+  private String comment = "";
+  private String country = "";
+  private String description = "";
+  private String imageURL = "";
+  private String price = "";
+  private int year = -1;
+  private WineColor color = WineColor.UNKNOWN;
+
+  public enum Attribute {
+    BARCODE("Barcode"), NAME("Name"), RATING("Rating"), COMMENT("Comment"), COUNTRY("Country"), DESCRIPTION("Description"), IMAGE_URL(
+        "Image URL"), PRICE("Price"), YEAR("Year"), WINE_COLOR("Wine color");
+
+    private String name;
+
+    private Attribute(String name) {
+      this.name = name;
+    }
+
+    public String getAttributeName() {
+      return name;
+    }
+  }
+
+  public String getValueFromAttribute(Attribute attr) {
+    switch (attr) {
+      case BARCODE:
+        return getBarcode();
+      case COMMENT:
+        return getComment();
+      case COUNTRY:
+        return getCountry();
+      case DESCRIPTION:
+        return getDescription();
+      case IMAGE_URL:
+        return getImageURL();
+      case NAME:
+        return getName();
+      case PRICE:
+        return getPrice();
+      case RATING:
+        return "" + getRating();
+      case WINE_COLOR:
+        return getColor().toString();
+      case YEAR:
+        return "" + getYear();
+      default:
+        return "programmer error";
+    }
+  }
+
+  public void putValueFromAttribute(Attribute attr, String value) {
+    switch (attr) {
+      case BARCODE:
+        setBarcode(value);
+        break;
+      case COMMENT:
+        setComment(value);
+        break;
+      case COUNTRY:
+        setCountry(value);
+        break;
+      case DESCRIPTION:
+        setDescription(value);
+        break;
+      case IMAGE_URL:
+        setImageURL(value);
+        break;
+      case NAME:
+        setName(value);
+        break;
+      case PRICE:
+        setPrice(value);
+        break;
+      case RATING:
+        setRating(Integer.parseInt(value));
+        break;
+      case WINE_COLOR:
+        setColor(WineColor.valueOf(value));
+        break;
+      case YEAR:
+        setYear(Integer.parseInt(value));
+        break;
+    }
+  }
 
   public enum WineColor {
-    RED("Red"), WHITE("White"), ROSE("Rose");
+    UNKNOWN(""), RED("Red"), WHITE("White"), ROSE("Rose");
 
     String name;
 
@@ -31,13 +108,14 @@ public class Wine implements Serializable {
       this.name = name;
     }
 
+    @Override
     public String toString() {
       return name;
     }
   }
 
   public Wine() {
-    
+
   }
 
   public Wine(String barcode, String name, String price, String description) {
