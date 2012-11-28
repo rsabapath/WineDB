@@ -50,7 +50,7 @@ public class WineAdapter extends ArrayAdapter<Wine> {
       TextView wineColorTextView = (TextView) v.findViewById(R.id.wine_color);
       TextView yearTextView = (TextView) v.findViewById(R.id.year);
       TextView ratingTextView = (TextView) v.findViewById(R.id.rating);
-      
+
       nameTextView.setText(o.getName());
       countryTextView.setText(o.getCountry());
       wineColorTextView.setText(o.getColor().toString());

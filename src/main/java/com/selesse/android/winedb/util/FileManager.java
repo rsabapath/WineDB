@@ -1,9 +1,8 @@
-package com.selesse.android.winedb;
+package com.selesse.android.winedb.util;
 
 import java.util.ArrayList;
 
 import com.selesse.android.winedb.model.Wine;
-
 
 /**
  * The file manager interface for the WineScanner application.

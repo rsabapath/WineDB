@@ -1,16 +1,9 @@
 package com.selesse.android.winedb.activity;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.ConnectException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.regex.Matcher;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import android.app.Activity;
@@ -32,13 +25,14 @@ import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-import com.selesse.android.winedb.FileManager;
 import com.selesse.android.winedb.R;
 import com.selesse.android.winedb.WineAdapter;
-import com.selesse.android.winedb.impl.FileManagerImpl;
 import com.selesse.android.winedb.model.RequestCode;
 import com.selesse.android.winedb.model.Wine;
 import com.selesse.android.winedb.model.WineContextMenu;
+import com.selesse.android.winedb.util.FileManager;
+import com.selesse.android.winedb.util.impl.FileManagerImpl;
+import com.selesse.android.winedb.winescraper.WineScrapers;
 
 public class WineDB extends ListActivity {
 
@@ -142,7 +136,11 @@ public class WineDB extends ListActivity {
     if (requestCodeNumber == IntentIntegrator.REQUEST_CODE && scanResult.getContents() == null)
       return;
     else if (requestCodeNumber == IntentIntegrator.REQUEST_CODE) {
-      getWineFromResults(scanResult.getContents());
+      Wine wine = getWineFromResults(scanResult.getContents());
+      // TODO edit, add, etc
+      Intent i = new Intent(this, EditWineView.class);
+      i.putExtra("wine", wine);
+      startActivityForResult(i, RequestCode.EDIT_WINE.ordinal());
       return;
     }
 
@@ -168,104 +166,21 @@ public class WineDB extends ListActivity {
     }
   }
 
-  private void getWineFromResults(String barcode) {
+  private Wine getWineFromResults(String barcode) {
 
     if (Pattern.matches("[0-9]{1,13}", barcode)) {
-
-      // response is a UPC code, fetch product meta data
-      // using Google Products API, Best Buy Remix, etc.
-      try {
-        // go to this link!
-        String shoppingLink = "http://www.selesse.com/winescanner/scan.php?code=" + barcode;
-        URL url = new URL(shoppingLink);
-
-        // connect to the link, read the contents
-        URLConnection connection = url.openConnection();
-        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-
-        // use array list to get contents
-        ArrayList<String> contents = new ArrayList<String>();
-
-        String inputLine;
-        while ((inputLine = in.readLine()) != null)
-          contents.add(inputLine);
-
-        if (contents.get(0).startsWith("404")) {
-          Log.v("WineScanner", "Wine not found through Google API");
-          Wine newWine = new Wine(barcode, "null", "null", "null");
-          Intent i = new Intent(this, EditWineView.class);
-          i.putExtra("wine", newWine);
-          startActivityForResult(i, RequestCode.EDIT_WINE.ordinal());
-        }
-        else if (contents.get(0).startsWith("UPCDB")) {
-          Wine newWine = new Wine(barcode, contents.get(1), "null", "null");
-          Intent i = new Intent(this, EditWineView.class);
-          i.putExtra("wine", newWine);
-          startActivityForResult(i, RequestCode.EDIT_WINE.ordinal());
-        }
-        else {
-          String wineName = contents.get(0);
-          String desc = contents.get(1);
-          String price = contents.get(2);
-          String image = "null";
-          String country = "null";
-          int year = 0;
-
-          Wine newWine = new Wine(barcode, wineName, price, desc);
-
-          for (String line : contents) {
-            if (line.startsWith("http") && image.equals("null")) {
-              newWine.setImageURL(line);
-            }
-
-            if (year == 0) {
-              Pattern p = Pattern.compile("\\b\\d{4}\\b");
-              Matcher m = p.matcher(line);
-
-              if (m.find()) {
-                newWine.setYear(Integer.parseInt(m.group(0)));
-              }
-            }
-
-            if (country.equals("null")) {
-              if (line.toLowerCase().contains("italy"))
-                newWine.setCountry("Italy");
-              if (line.toLowerCase().contains("france"))
-                newWine.setCountry("France");
-              if (line.toLowerCase().contains("spain") || line.toLowerCase().contains("spanien"))
-                newWine.setCountry("Spain");
-              if (line.toLowerCase().contains("germany"))
-                newWine.setCountry("Germany");
-              if (line.toLowerCase().contains("canada"))
-                newWine.setCountry("Canada");
-            }
-          }
-
-          Log.v("WineScanner", newWine.toString());
-
-          Intent i = new Intent(this, EditWineView.class);
-          i.putExtra("wine", newWine);
-          startActivityForResult(i, RequestCode.EDIT_WINE.ordinal());
-        }
+      WineScrapers scrapers = new WineScrapers(barcode);
+      List<Wine> wines = scrapers.scrape();
+      if (wines.size() > 0) {
+        return wines.get(0);
       }
-      catch (MalformedURLException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
-      catch (ConnectException e) {
-        Toast.makeText(this, "Internet doesn't work!", Toast.LENGTH_LONG).show();
-      }
-      catch (IOException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
-
     }
     else {
       Log.v("WineScanner", "Failed to find UPC Code");
     }
 
     Log.v("WineScanner", barcode.toString());
+    return null;
   }
 
   @Override

@@ -6,14 +6,21 @@
 
     <uses-sdk
         android:minSdkVersion="8"
-        android:targetSdkVersion="8" />
+        android:targetSdkVersion="17" />
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <instrumentation
+        android:name="android.test.InstrumentationTestRunner"
+        android:targetPackage="com.selesse.android.winedb" >
+    </instrumentation>
+
     <application
+        android:allowBackup="true"
         android:icon="@drawable/icon"
         android:label="@string/app_name" >
+        <uses-library android:name="android.test.runner" />
         <activity
             android:name=".activity.WineDB"
             android:configChanges="orientation|keyboardHidden"
@@ -21,10 +28,12 @@
             android:theme="@android:style/Theme.NoTitleBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
                 <action android:name="com.google.zxing.client.android.SCAN" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>

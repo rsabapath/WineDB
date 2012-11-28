@@ -1,4 +1,4 @@
-package com.selesse.android.winedb.impl;
+package com.selesse.android.winedb.util.impl;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -10,10 +10,10 @@ import java.util.ArrayList;
 
 import android.os.Environment;
 
-import com.selesse.android.winedb.FileManager;
 import com.selesse.android.winedb.activity.WineDB;
 import com.selesse.android.winedb.model.Wine;
 import com.selesse.android.winedb.model.Wine.Attribute;
+import com.selesse.android.winedb.util.FileManager;
 
 public class FileManagerImpl implements FileManager {
   public final static String WINEDB_LOCATION = Environment.getExternalStorageDirectory().getPath();
