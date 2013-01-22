@@ -1,6 +1,5 @@
 package com.selesse.android.winedb.activity;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -23,7 +22,6 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.google.common.collect.Lists;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.selesse.android.winedb.R;
@@ -32,27 +30,30 @@ import com.selesse.android.winedb.model.RequestCode;
 import com.selesse.android.winedb.model.Wine;
 import com.selesse.android.winedb.model.WineContextMenu;
 import com.selesse.android.winedb.util.FileManager;
-import com.selesse.android.winedb.util.impl.FlatFileManagerImpl;
+import com.selesse.android.winedb.util.impl.sqlite.WinesDataSource;
 import com.selesse.android.winedb.winescraper.WineScrapers;
 
 public class WineDB extends ListActivity {
-
-  public ArrayList<Wine> wineList = Lists.newArrayList();
+  
+  private FileManager dataSource;
+  private List<Wine> wines;
   private WineAdapter wineAdapter;
-  public Wine tempWine;
-  private FileManager fileManager;
+  private Wine tempWine;
 
   /** Called when the activity is first created. */
   @Override
   public void onCreate(Bundle savedInstanceState) {
-    final Activity activity = this;
-
-    fileManager = new FlatFileManagerImpl(wineList);
-
     super.onCreate(savedInstanceState);
     setContentView(R.layout.main);
+    
+    final Activity activity = this;
+    
+    dataSource = new WinesDataSource(this);
+    dataSource.open();
+    
+    wines = dataSource.getAllWines();
 
-    wineAdapter = new WineAdapter(this, R.layout.rows, wineList);
+    wineAdapter = new WineAdapter(this, R.layout.rows, wines);
     setListAdapter(wineAdapter);
 
     ListView listView = getListView();
@@ -62,7 +63,7 @@ public class WineDB extends ListActivity {
       @Override
       public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         // get the wine at that position and pass it to the view single wine activity
-        Wine displayedWine = wineList.get(position);
+        Wine displayedWine = wines.get(position);
 
         Intent intent = new Intent(activity, SingleWineView.class);
         intent.putExtra("wine", displayedWine);
@@ -80,8 +81,8 @@ public class WineDB extends ListActivity {
 
         int id = (int) info.id;
 
-        menu.setHeaderTitle(wineList.get(id).getName()
-            .substring(0, Math.min(wineList.get(id).getName().length(), 22)));
+        menu.setHeaderTitle(wines.get(id).getName()
+            .substring(0, Math.min(wines.get(id).getName().length(), 22)));
 
         for (WineContextMenu contextMenuItem : WineContextMenu.values()) {
           menu.add(0, id, contextMenuItem.ordinal(), contextMenuItem.toString());
@@ -115,8 +116,8 @@ public class WineDB extends ListActivity {
 
     switch (selectedItem) {
       case DELETE:
-        Wine delete_wine = wineList.get(wineID);
-        fileManager.deleteWine(delete_wine);
+        Wine delete_wine = wines.get(wineID);
+        dataSource.deleteWine(delete_wine);
         wineAdapter.notifyDataSetChanged();
         Toast.makeText(
             this,
@@ -126,8 +127,8 @@ public class WineDB extends ListActivity {
         break;
       case EDIT:
         Intent i = new Intent(this, EditWineView.class);
-        i.putExtra("wine", wineList.get(wineID));
-        tempWine = wineList.remove(wineID);
+        i.putExtra("wine", wines.get(wineID));
+        tempWine = wines.remove(wineID);
         startActivityForResult(i, RequestCode.DELETE_THEN_EDIT.ordinal());
         break;
     }
@@ -158,13 +159,13 @@ public class WineDB extends ListActivity {
       if (resultCode == RESULT_OK) {
         Bundle bundle = intent.getExtras();
         Wine w = (Wine) bundle.get("Wine");
-        fileManager.addWine(w);
+        dataSource.createWine(w);
         wineAdapter.notifyDataSetChanged();
         return;
       }
       else {
         if (requestCode == RequestCode.DELETE_THEN_EDIT) {
-          fileManager.addWine(tempWine);
+          dataSource.createWine(tempWine);
           wineAdapter.notifyDataSetChanged();
           return;
         }
@@ -212,7 +213,7 @@ public class WineDB extends ListActivity {
     }
     else if (item.getTitle().equals("Sort")) {
       // TODO sort by name works for now, let's do rest later
-      Collections.sort(wineList, new Comparator<Wine>() {
+      Collections.sort(wines, new Comparator<Wine>() {
         @Override
         public int compare(Wine wine1, Wine wine2) {
           return wine1.getName().compareTo(wine2.getName());

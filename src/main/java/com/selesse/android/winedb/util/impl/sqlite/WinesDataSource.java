@@ -7,12 +7,14 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.google.common.collect.Lists;
 import com.selesse.android.winedb.model.Wine;
 import com.selesse.android.winedb.model.Wine.WineColor;
+import com.selesse.android.winedb.util.FileManager;
 
-public class WinesDataSource {
+public class WinesDataSource implements FileManager {
   private SQLiteDatabase db;
   private WineSQLiteHelper dbHelper;
   private String[] allColumns = {
@@ -32,14 +34,22 @@ public class WinesDataSource {
     dbHelper = new WineSQLiteHelper(context);
   }
 
-  public void open() throws SQLException {
-    db = dbHelper.getWritableDatabase();
+  @Override
+  public void open() {
+    try {
+      db = dbHelper.getWritableDatabase();
+    }
+    catch (SQLException e) {
+      Log.w(WinesDataSource.class.getName(), "Could not get writable database");
+    }
   }
 
+  @Override
   public void close() {
     dbHelper.close();
   }
 
+  @Override
   public Wine createWine(Wine wine) {
     ContentValues values = new ContentValues();
 
@@ -65,11 +75,13 @@ public class WinesDataSource {
     return newWine;
   }
 
+  @Override
   public void deleteWine(Wine wine) {
     long id = wine.getId();
     db.delete(WineSQLiteHelper.TABLE_WINES, WineSQLiteHelper.COLUMN_ID + " = " + id, null);
   }
 
+  @Override
   public List<Wine> getAllWines() {
     List<Wine> wines = Lists.newArrayList();
 
@@ -100,7 +112,12 @@ public class WinesDataSource {
     wine.setImageURL(cursor.getString(7));
     wine.setPrice(cursor.getString(8));
     wine.setYear(cursor.getInt(9));
-    wine.setColor(WineColor.valueOf(cursor.getString(10)));
+    try {
+      wine.setColor(WineColor.valueOf(cursor.getString(10)));
+    }
+    catch (IllegalArgumentException e) {
+      wine.setColor(WineColor.UNKNOWN);
+    }
     
     return wine;
   }

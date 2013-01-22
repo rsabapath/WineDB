@@ -10,7 +10,6 @@ import java.util.ArrayList;
 
 import android.os.Environment;
 
-import com.selesse.android.winedb.activity.WineDB;
 import com.selesse.android.winedb.model.Wine;
 import com.selesse.android.winedb.model.Wine.Attribute;
 import com.selesse.android.winedb.util.FileManager;
@@ -71,7 +70,6 @@ public class FlatFileManagerImpl implements FileManager {
     return readWines;
   }
 
-  @Override
   public void saveWines() {
     File file = new File(WINEDB_FILE);
     try {
@@ -99,14 +97,25 @@ public class FlatFileManagerImpl implements FileManager {
   }
 
   @Override
-  public void addWine(Wine wine) {
+  public Wine createWine(Wine wine) {
     wineList.add(wine);
     saveWines();
+    return wine;
   }
 
   @Override
-  public ArrayList<Wine> getWineList() {
+  public ArrayList<Wine> getAllWines() {
     return this.wineList;
+  }
+
+  @Override
+  public void open() {
+    loadWineList();
+  }
+
+  @Override
+  public void close() {
+    // do nothing
   }
 
 }

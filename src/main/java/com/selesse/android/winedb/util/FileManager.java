@@ -1,6 +1,6 @@
 package com.selesse.android.winedb.util;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import com.selesse.android.winedb.model.Wine;
 
@@ -12,26 +12,18 @@ import com.selesse.android.winedb.model.Wine;
 public interface FileManager {
 
   /**
-   * Remove a particular {@link com.selesse.android.winedb.model.Wine} from the
-   * list of wines.
+   * Remove a particular {@link com.selesse.android.winedb.model.Wine} from the list of wines.
    * 
-   * @param delete_wine
+   * @param wine
    *          The Wine object to be deleted.
    */
-  public void deleteWine(Wine delete_wine);
+  public void deleteWine(Wine wine);
 
-  /**
-   * Adds a wine to the master list.
-   * 
-   * @param newWine
-   *          The new Wine object to add to the master wine list.
-   */
-  public void addWine(Wine newWine);
+  public Wine createWine(Wine wine);
 
-  /**
-   * Saves the wines.
-   */
-  public void saveWines();
+  public List<Wine> getAllWines();
 
-  public ArrayList<Wine> getWineList();
+  void open();
+
+  void close();
 }
