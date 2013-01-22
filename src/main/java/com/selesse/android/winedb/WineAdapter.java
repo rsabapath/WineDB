@@ -13,52 +13,56 @@ import com.selesse.android.winedb.model.Wine;
 
 public class WineAdapter extends ArrayAdapter<Wine> {
 
-  private ArrayList<Wine> wine;
+  private ArrayList<Wine> wines;
 
   public WineAdapter(Context context, int textViewResourceId, ArrayList<Wine> wine) {
     super(context, textViewResourceId, wine);
-    this.wine = wine;
+    this.wines = wine;
   }
 
   public void changeData(ArrayList<Wine> wine) {
-    this.wine = wine;
+    this.wines = wine;
     notifyDataSetChanged();
   }
 
   @Override
   public int getCount() {
-    return this.wine.size();
+    return this.wines.size();
   }
 
   @Override
   public Wine getItem(int position) {
-    return this.wine.get(position);
+    return this.wines.get(position);
   }
 
   @Override
   public View getView(int position, View convertView, ViewGroup parent) {
-    View v = convertView;
-    if (v == null) {
+    View view = convertView;
+    if (view == null) {
       LayoutInflater vi = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-      v = vi.inflate(R.layout.rows, null);
+      view = vi.inflate(R.layout.rows, null);
     }
-    Wine o = wine.get(position);
 
-    if (o != null) {
-      TextView nameTextView = (TextView) v.findViewById(R.id.name);
-      TextView countryTextView = (TextView) v.findViewById(R.id.country);
-      TextView wineColorTextView = (TextView) v.findViewById(R.id.wine_color);
-      TextView yearTextView = (TextView) v.findViewById(R.id.year);
-      TextView ratingTextView = (TextView) v.findViewById(R.id.rating);
+    Wine wine = wines.get(position);
 
-      nameTextView.setText(o.getName());
-      countryTextView.setText(o.getCountry());
-      wineColorTextView.setText(o.getColor().toString());
-      if (o.getYear() > 0)
-        yearTextView.setText(o.getYear() + "");
-      if (o.getRating() > 0)
-        ratingTextView.setText(o.getRating() + "");
+    if (wine != null) {
+      TextView nameTextView = (TextView) view.findViewById(R.id.name);
+      TextView countryTextView = (TextView) view.findViewById(R.id.country);
+      TextView wineColorTextView = (TextView) view.findViewById(R.id.wine_color);
+      TextView yearTextView = (TextView) view.findViewById(R.id.year);
+      TextView ratingTextView = (TextView) view.findViewById(R.id.rating);
+
+      nameTextView.setText(wine.getName());
+      countryTextView.setText(wine.getCountry());
+      wineColorTextView.setText(wine.getColor().toString());
+      if (wine.getYear() > 0) {
+        yearTextView.setText(wine.getYear() + "");
+      }
+      if (wine.getRating() > 0) {
+        ratingTextView.setText(wine.getRating() + "");
+      }
     }
-    return v;
+
+    return view;
   }
 }

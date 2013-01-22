@@ -11,6 +11,7 @@ import java.io.Serializable;
 public class Wine implements Serializable {
 
   private static final long serialVersionUID = 231532486466908646L;
+  private long id;
   private String barcode = "";
   private String name = "";
   private int rating = -1;
@@ -114,17 +115,6 @@ public class Wine implements Serializable {
     }
   }
 
-  public Wine() {
-
-  }
-
-  public Wine(String barcode, String name, String price, String description) {
-    this.barcode = barcode;
-    this.name = name;
-    this.price = price;
-    this.description = description;
-  }
-
   public String getCountry() {
     return country;
   }
@@ -203,6 +193,14 @@ public class Wine implements Serializable {
 
   public void setColor(WineColor color) {
     this.color = color;
+  }
+  
+  public long getId() {
+    return id;
+  }
+  
+  public void setId(long id) {
+    this.id = id;
   }
 
 }

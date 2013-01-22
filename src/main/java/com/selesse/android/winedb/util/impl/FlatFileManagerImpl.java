@@ -15,14 +15,14 @@ import com.selesse.android.winedb.model.Wine;
 import com.selesse.android.winedb.model.Wine.Attribute;
 import com.selesse.android.winedb.util.FileManager;
 
-public class FileManagerImpl implements FileManager {
+public class FlatFileManagerImpl implements FileManager {
   public final static String WINEDB_LOCATION = Environment.getExternalStorageDirectory().getPath();
   public final static String WINEDB_FILE = WINEDB_LOCATION + "/winescanner/wineDB";
   
   ArrayList<Wine> wineList;
   
-  public FileManagerImpl() {
-    this.wineList = WineDB.wineList;
+  public FlatFileManagerImpl(ArrayList<Wine> wines) {
+    this.wineList = wines;
     wineList = loadWineList();
   }
 

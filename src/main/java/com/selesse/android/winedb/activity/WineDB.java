@@ -23,6 +23,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.common.collect.Lists;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.selesse.android.winedb.R;
@@ -31,12 +32,12 @@ import com.selesse.android.winedb.model.RequestCode;
 import com.selesse.android.winedb.model.Wine;
 import com.selesse.android.winedb.model.WineContextMenu;
 import com.selesse.android.winedb.util.FileManager;
-import com.selesse.android.winedb.util.impl.FileManagerImpl;
+import com.selesse.android.winedb.util.impl.FlatFileManagerImpl;
 import com.selesse.android.winedb.winescraper.WineScrapers;
 
 public class WineDB extends ListActivity {
 
-  public static ArrayList<Wine> wineList = new ArrayList<Wine>();
+  public ArrayList<Wine> wineList = Lists.newArrayList();
   private WineAdapter wineAdapter;
   public Wine tempWine;
   private FileManager fileManager;
@@ -46,7 +47,7 @@ public class WineDB extends ListActivity {
   public void onCreate(Bundle savedInstanceState) {
     final Activity activity = this;
 
-    fileManager = new FileManagerImpl();
+    fileManager = new FlatFileManagerImpl(wineList);
 
     super.onCreate(savedInstanceState);
     setContentView(R.layout.main);
@@ -54,14 +55,13 @@ public class WineDB extends ListActivity {
     wineAdapter = new WineAdapter(this, R.layout.rows, wineList);
     setListAdapter(wineAdapter);
 
-    ListView lv = getListView();
-    lv.setTextFilterEnabled(true);
+    ListView listView = getListView();
+    listView.setTextFilterEnabled(true);
 
-    lv.setOnItemClickListener(new OnItemClickListener() {
+    listView.setOnItemClickListener(new OnItemClickListener() {
       @Override
       public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        // get the wine at that position and pass it to the view single
-        // wine activity
+        // get the wine at that position and pass it to the view single wine activity
         Wine displayedWine = wineList.get(position);
 
         Intent intent = new Intent(activity, SingleWineView.class);
@@ -70,20 +70,22 @@ public class WineDB extends ListActivity {
       }
     });
 
-    lv.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
+    listView.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
 
       @Override
       public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+        // go through all the WineContextMenu enum, make them clickable items
+        
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
 
         int id = (int) info.id;
 
-        menu.setHeaderTitle(wineList.get(id).getName().substring(0, Math.min(wineList.get(id).getName().length(), 22)));
+        menu.setHeaderTitle(wineList.get(id).getName()
+            .substring(0, Math.min(wineList.get(id).getName().length(), 22)));
 
         for (WineContextMenu contextMenuItem : WineContextMenu.values()) {
           menu.add(0, id, contextMenuItem.ordinal(), contextMenuItem.toString());
         }
-
       }
     });
 
@@ -104,7 +106,8 @@ public class WineDB extends ListActivity {
   public boolean onContextItemSelected(MenuItem item) {
     super.onContextItemSelected(item);
 
-    AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+    AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item
+        .getMenuInfo();
 
     int wineID = (int) info.id;
 
@@ -115,7 +118,10 @@ public class WineDB extends ListActivity {
         Wine delete_wine = wineList.get(wineID);
         fileManager.deleteWine(delete_wine);
         wineAdapter.notifyDataSetChanged();
-        Toast.makeText(this, "Deleted " + delete_wine.getName().substring(0, Math.min(40, delete_wine.getName().length())),
+        Toast.makeText(
+            this,
+            "Deleted "
+                + delete_wine.getName().substring(0, Math.min(40, delete_wine.getName().length())),
             Toast.LENGTH_SHORT).show();
         break;
       case EDIT:
@@ -131,7 +137,8 @@ public class WineDB extends ListActivity {
 
   @Override
   public void onActivityResult(int requestCodeNumber, int resultCode, Intent intent) {
-    IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCodeNumber, resultCode, intent);
+    IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCodeNumber, resultCode,
+        intent);
 
     if (requestCodeNumber == IntentIntegrator.REQUEST_CODE && scanResult.getContents() == null)
       return;
