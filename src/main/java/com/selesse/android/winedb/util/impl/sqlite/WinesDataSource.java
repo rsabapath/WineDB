@@ -12,9 +12,9 @@ import android.util.Log;
 import com.google.common.collect.Lists;
 import com.selesse.android.winedb.model.Wine;
 import com.selesse.android.winedb.model.Wine.WineColor;
-import com.selesse.android.winedb.util.FileManager;
+import com.selesse.android.winedb.util.WineDatabase;
 
-public class WinesDataSource implements FileManager {
+public class WinesDataSource implements WineDatabase {
   private SQLiteDatabase db;
   private WineSQLiteHelper dbHelper;
   private String[] allColumns = {

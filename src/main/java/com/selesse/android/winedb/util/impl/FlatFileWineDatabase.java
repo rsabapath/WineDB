@@ -6,37 +6,56 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.ArrayList;
+import java.util.List;
 
 import android.os.Environment;
 
+import com.google.common.collect.Lists;
 import com.selesse.android.winedb.model.Wine;
 import com.selesse.android.winedb.model.Wine.Attribute;
-import com.selesse.android.winedb.util.FileManager;
+import com.selesse.android.winedb.util.WineDatabase;
 
-public class FlatFileManagerImpl implements FileManager {
+/**
+ * Flat file implementation of the wine database. This is one way to store the wines, but it's not
+ * as clean as using SQLite.
+ * 
+ * <p>
+ * Its advantage is its portability, readability (i.e. just send me your wineDB file) but
+ * disadvantage is in the implementation. It's harder to do things like search, sort, filter and
+ * anything special (especially when compared to SQLite).
+ * </p>
+ * 
+ * @author Alex Selesse
+ * 
+ */
+public class FlatFileWineDatabase implements WineDatabase {
   public final static String WINEDB_LOCATION = Environment.getExternalStorageDirectory().getPath();
   public final static String WINEDB_FILE = WINEDB_LOCATION + "/winescanner/wineDB";
-  
-  ArrayList<Wine> wineList;
-  
-  public FlatFileManagerImpl(ArrayList<Wine> wines) {
-    this.wineList = wines;
-    wineList = loadWineList();
+
+  private List<Wine> wines;
+
+  @Override
+  public void open() {
+    wines = loadWines();
   }
 
-  private ArrayList<Wine> loadWineList() {
+  @Override
+  public void close() {
+    saveWines();
+  }
+
+  private List<Wine> loadWines() {
     File file = new File(WINEDB_FILE);
 
     if (file.exists()) {
-      wineList = loadWines(file);
+      wines = loadWines(file);
     }
-    
-    return wineList;
+
+    return wines;
   }
 
-  private ArrayList<Wine> loadWines(File file) {
-    ArrayList<Wine> readWines = new ArrayList<Wine>();
+  private List<Wine> loadWines(File file) {
+    List<Wine> readWines = Lists.newArrayList();
     try {
       BufferedReader input = new BufferedReader(new FileReader(file));
       String line;
@@ -45,9 +64,9 @@ public class FlatFileManagerImpl implements FileManager {
       while ((line = input.readLine()) != null) {
         String key = line.substring(0, line.indexOf(":"));
         String value = line.substring(line.indexOf(":") + 1);
-        
+
         wine.putValueFromAttribute(Wine.Attribute.valueOf(key), value);
-        
+
         if (attributes < Wine.Attribute.values().length) {
           attributes++;
         }
@@ -57,65 +76,55 @@ public class FlatFileManagerImpl implements FileManager {
           wine = new Wine();
         }
       }
-      
+
       input.close();
     }
     catch (FileNotFoundException e) {
-      
+
     }
     catch (IOException e) {
-      
+
     }
-    
+
     return readWines;
   }
 
-  public void saveWines() {
+  private void saveWines() {
     File file = new File(WINEDB_FILE);
     try {
       PrintStream output = new PrintStream(file);
-      for (Wine wine : wineList) {
+      for (Wine wine : wines) {
         for (Attribute attr : Wine.Attribute.values()) {
           String key = attr.getAttributeName();
           String value = wine.getValueFromAttribute(attr);
-          
+
           output.println(key + ":" + value);
         }
       }
-      
+
       output.close();
     }
     catch (FileNotFoundException e) {
-      
+
     }
   }
-  
+
   @Override
   public void deleteWine(Wine wine) {
-    wineList.remove(wine);
+    wines.remove(wine);
     saveWines();
   }
 
   @Override
   public Wine createWine(Wine wine) {
-    wineList.add(wine);
+    wines.add(wine);
     saveWines();
     return wine;
   }
 
   @Override
-  public ArrayList<Wine> getAllWines() {
-    return this.wineList;
-  }
-
-  @Override
-  public void open() {
-    loadWineList();
-  }
-
-  @Override
-  public void close() {
-    // do nothing
+  public List<Wine> getAllWines() {
+    return this.wines;
   }
 
 }

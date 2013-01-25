@@ -29,13 +29,13 @@ import com.selesse.android.winedb.WineAdapter;
 import com.selesse.android.winedb.model.RequestCode;
 import com.selesse.android.winedb.model.Wine;
 import com.selesse.android.winedb.model.WineContextMenu;
-import com.selesse.android.winedb.util.FileManager;
+import com.selesse.android.winedb.util.WineDatabase;
 import com.selesse.android.winedb.util.impl.sqlite.WinesDataSource;
 import com.selesse.android.winedb.winescraper.WineScrapers;
 
 public class WineDB extends ListActivity {
   
-  private FileManager dataSource;
+  private WineDatabase dataSource;
   private List<Wine> wines;
   private WineAdapter wineAdapter;
   private Wine tempWine;
@@ -48,6 +48,7 @@ public class WineDB extends ListActivity {
     
     final Activity activity = this;
     
+    // initialize the
     dataSource = new WinesDataSource(this);
     dataSource.open();
     
@@ -57,7 +58,6 @@ public class WineDB extends ListActivity {
     setListAdapter(wineAdapter);
 
     ListView listView = getListView();
-    listView.setTextFilterEnabled(true);
 
     listView.setOnItemClickListener(new OnItemClickListener() {
       @Override
