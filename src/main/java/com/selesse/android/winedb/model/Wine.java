@@ -4,9 +4,9 @@ import java.io.Serializable;
 
 /**
  * Model class for a wine object.
- * 
+ *
  * @author Alex Selesse
- * 
+ *
  */
 public class Wine implements Serializable {
 
@@ -24,8 +24,16 @@ public class Wine implements Serializable {
   private WineColor color = WineColor.UNKNOWN;
 
   public enum Attribute {
-    BARCODE("Barcode"), NAME("Name"), RATING("Rating"), COMMENT("Comment"), COUNTRY("Country"), DESCRIPTION("Description"), IMAGE_URL(
-        "Image URL"), PRICE("Price"), YEAR("Year"), WINE_COLOR("Wine color");
+    BARCODE("Barcode"),
+    NAME("Name"),
+    RATING("Rating"),
+    COMMENT("Comment"),
+    COUNTRY("Country"),
+    DESCRIPTION("Description"),
+    IMAGE_URL("Image URL"),
+    PRICE("Price"),
+    YEAR("Year"),
+    WINE_COLOR("Wine color");
 
     private String name;
 
@@ -101,7 +109,10 @@ public class Wine implements Serializable {
   }
 
   public enum WineColor {
-    UNKNOWN(""), RED("Red"), WHITE("White"), ROSE("Rose");
+    UNKNOWN(""),
+    RED("Red"),
+    WHITE("White"),
+    ROSE("Rose");
 
     String name;
 
@@ -194,11 +205,11 @@ public class Wine implements Serializable {
   public void setColor(WineColor color) {
     this.color = color;
   }
-  
+
   public long getId() {
     return id;
   }
-  
+
   public void setId(long id) {
     this.id = id;
   }

@@ -27,8 +27,9 @@ public class SingleWineView extends Activity {
   protected void onCreate(Bundle savedInstanceState) {
 
     Bundle bundle = this.getIntent().getExtras();
-    if (bundle != null)
+    if (bundle != null) {
       wine = (Wine) bundle.getSerializable("wine");
+    }
 
     super.onCreate(savedInstanceState);
     setContentView(R.layout.single_wine);
@@ -53,33 +54,43 @@ public class SingleWineView extends Activity {
       }
     });
 
-    if (wine.getName() != null && !wine.getName().equals(""))
+    if (wine.getName() != null && !wine.getName().equals("")) {
       nameText.setText(wine.getName());
-    if (wine.getCountry() != null && !wine.getCountry().equals(""))
+    }
+    if (wine.getCountry() != null && !wine.getCountry().equals("")) {
       countryText.setText(wine.getCountry());
-    if (wine.getYear() > 1500)
+    }
+    if (wine.getYear() > 1500) {
       yearText.setText(String.valueOf(wine.getYear()));
-    if (wine.getDescription() != null && !wine.getDescription().equals(""))
+    }
+    if (wine.getDescription() != null && !wine.getDescription().equals("")) {
       descText.setText(wine.getDescription());
-    if (wine.getRating() > 0)
+    }
+    if (wine.getRating() > 0) {
       ratingText.setText(String.valueOf(wine.getRating()));
-    else
+    }
+    else {
       ratingText.setText("Unrated");
-    if (!wine.getPrice().equals(""))
+    }
+    if (!wine.getPrice().equals("")) {
       priceText.setText(wine.getPrice());
-    if (wine.getComment() != null && !wine.getComment().equals(""))
+    }
+    if (wine.getComment() != null && !wine.getComment().equals("")) {
       commentText.setText(wine.getComment());
-    else
+    }
+    else {
       commentText.setText("No comments yet.");
+    }
 
     if (wine.getImageURL() != null && wine.getImageURL().startsWith("http")) {
       BitmapFactory.Options bmOptions;
       bmOptions = new BitmapFactory.Options();
       bmOptions.inSampleSize = 1;
       Bitmap bm = LoadImage(wine.getImageURL(), bmOptions);
-      if (bm != null)
+      if (bm != null) {
         image.setImageBitmap(bm);
-      // TODO make this run in a separate thread
+        // TODO make this run in a separate thread
+      }
     }
   }
 
@@ -88,8 +99,9 @@ public class SingleWineView extends Activity {
     InputStream in = null;
     try {
       in = OpenHttpConnection(URL);
-      if (in == null)
+      if (in == null) {
         return bitmap;
+      }
       bitmap = BitmapFactory.decodeStream(in, null, options);
       in.close();
     }

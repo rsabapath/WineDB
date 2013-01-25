@@ -7,11 +7,10 @@ import com.selesse.android.winedb.model.Wine;
 import com.selesse.android.winedb.winescraper.impl.GoogleShopperWineScraper;
 
 /**
- * Collection of wine scrapers that uses 1 or more wine scrapers to return
- * results.
- * 
+ * Collection of wine scrapers that uses 1 or more wine scrapers to return results.
+ *
  * @author Alex Selesse
- * 
+ *
  */
 public class WineScrapers {
 

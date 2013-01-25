@@ -18,15 +18,15 @@ import com.selesse.android.winedb.util.WineDatabase;
 /**
  * Flat file implementation of the wine database. This is one way to store the wines, but it's not
  * as clean as using SQLite.
- * 
+ *
  * <p>
  * Its advantage is its portability, readability (i.e. just send me your wineDB file) but
  * disadvantage is in the implementation. It's harder to do things like search, sort, filter and
  * anything special (especially when compared to SQLite).
  * </p>
- * 
+ *
  * @author Alex Selesse
- * 
+ *
  */
 public class FlatFileWineDatabase implements WineDatabase {
   public final static String WINEDB_LOCATION = Environment.getExternalStorageDirectory().getPath();

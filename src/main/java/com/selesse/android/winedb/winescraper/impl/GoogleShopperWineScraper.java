@@ -20,7 +20,8 @@ public class GoogleShopperWineScraper implements WineScraper {
   private List<Exception> errors;
 
   public GoogleShopperWineScraper(String barcode) {
-    List<String> options = Lists.newArrayList("country=US", "language=en", "q=" + barcode, "key=" + GoogleShopperKey.getKey());
+    List<String> options = Lists.newArrayList("country=US", "language=en", "q=" + barcode, "key="
+        + GoogleShopperKey.getKey());
 
     url = "https://www.googleapis.com/shopping/search/v1/public/products?";
     url += Joiner.on("&").join(options);
@@ -34,12 +35,12 @@ public class GoogleShopperWineScraper implements WineScraper {
       URLConnection connection = url.openConnection();
       BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
       String rawJson = "";
-      
+
       String buffer;
       while ((buffer = in.readLine()) != null) {
         rawJson += buffer;
       }
-      
+
       Gson gson = new Gson();
       GoogleShopperResponse results = gson.fromJson(rawJson, GoogleShopperResponse.class);
       if (results.getResultsSize() > 0) {
@@ -52,7 +53,7 @@ public class GoogleShopperWineScraper implements WineScraper {
     catch (IOException e) {
       errors.add(e);
     }
-    
+
     return scrapedWines;
   }
 
@@ -60,7 +61,7 @@ public class GoogleShopperWineScraper implements WineScraper {
   public String getQueryUrl() {
     return url;
   }
-  
+
   @Override
   public List<Exception> getErrors() {
     return errors;

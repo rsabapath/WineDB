@@ -95,13 +95,13 @@ public class WinesDataSource implements WineDatabase {
       cursor.moveToNext();
     }
     cursor.close();
-    
+
     return wines;
   }
 
   private Wine cursorToWine(Cursor cursor) {
     Wine wine = new Wine();
-    
+
     wine.setId(cursor.getLong(0));
     wine.setBarcode(cursor.getString(1));
     wine.setName(cursor.getString(2));
@@ -118,7 +118,7 @@ public class WinesDataSource implements WineDatabase {
     catch (IllegalArgumentException e) {
       wine.setColor(WineColor.UNKNOWN);
     }
-    
+
     return wine;
   }
 

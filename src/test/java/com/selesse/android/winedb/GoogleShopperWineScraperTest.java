@@ -17,7 +17,7 @@ public class GoogleShopperWineScraperTest extends AndroidTestCase {
     String expectedUrl = String.format(
         "https://www.googleapis.com/shopping/search/v1/public/products?country=US&language=en&q=%s&key=%s", barcode,
         GoogleShopperKey.getKey());
-    
+
     assertEquals(expectedUrl, scraper.getQueryUrl());
   }
 }
