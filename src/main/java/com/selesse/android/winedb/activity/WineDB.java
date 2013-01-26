@@ -38,7 +38,6 @@ public class WineDB extends ListActivity {
   private WineDatabase wineDatabase;
   private List<Wine> wines;
   private WineAdapter wineAdapter;
-  private Wine tempWine;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -109,15 +108,15 @@ public class WineDB extends ListActivity {
     AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item
         .getMenuInfo();
 
-    int wineID = (int) info.id;
+    int winePositionIndex = (int) info.id;
 
     WineContextMenu selectedItem = WineContextMenu.values()[item.getOrder()];
 
     switch (selectedItem) {
       case DELETE:
-        Wine delete_wine = wines.get(wineID);
+        Wine delete_wine = wines.get(winePositionIndex);
         wineDatabase.deleteWine(delete_wine);
-        wines.remove(wineID);
+        wines.remove(winePositionIndex);
         wineAdapter.notifyDataSetChanged();
         Toast.makeText(
             this,
@@ -127,9 +126,9 @@ public class WineDB extends ListActivity {
         break;
       case EDIT:
         Intent i = new Intent(this, CreateOrEditWineActivity.class);
-        i.putExtra("wine", wines.get(wineID));
-        tempWine = wines.remove(wineID);
-        startActivityForResult(i, RequestCode.DELETE_THEN_EDIT.ordinal());
+        i.putExtra("wine", wines.get(winePositionIndex));
+        wines.remove(winePositionIndex);
+        startActivityForResult(i, RequestCode.EDIT_WINE.ordinal());
         break;
     }
 
@@ -138,6 +137,10 @@ public class WineDB extends ListActivity {
 
   @Override
   public void onActivityResult(int requestCodeNumber, int resultCode, Intent intent) {
+    if (requestCodeNumber == Activity.RESULT_CANCELED) {
+      return;
+    }
+
     IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCodeNumber, resultCode,
         intent);
 
@@ -159,24 +162,24 @@ public class WineDB extends ListActivity {
     // this is a request code made for the winedb application, figure out which one
     RequestCode requestCode = RequestCode.values()[requestCodeNumber];
 
-    if (requestCode == RequestCode.EDIT_WINE || requestCode == RequestCode.DELETE_THEN_EDIT) {
+    if (requestCode == RequestCode.EDIT_WINE) {
+      Wine wine = null;
+
       // this is a returned wine
       if (resultCode == RESULT_OK) {
         Bundle bundle = intent.getExtras();
-        Wine wine = (Wine) bundle.get("Wine");
-        wine = wineDatabase.createWine(wine);
+        wine = (Wine) bundle.get("wine");
+
+        // if it doesn't yet have an id, give it one
+        if (wine.getId() == 0) {
+          wine = wineDatabase.createWine(wine);
+        }
+        // otherwise just update the already-existing wine
+        else {
+          wineDatabase.updateWine(wine);
+        }
         wines.add(wine);
         wineAdapter.notifyDataSetChanged();
-        return;
-      }
-      else {
-        if (requestCode == RequestCode.DELETE_THEN_EDIT) {
-          Wine wine = wineDatabase.createWine(tempWine);
-          wines.add(wine);
-          wineAdapter.notifyDataSetChanged();
-          return;
-        }
-        return;
       }
     }
   }

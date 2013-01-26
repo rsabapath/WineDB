@@ -10,6 +10,7 @@
     <string name="wine_barcode">Barcode</string>
     <string name="wine_country">Country</string>
     <string name="wine_year">Year</string>
+    <string name="wine_color">Wine Color</string>
     <string name="wine_description">Description</string>
     <string name="wine_rating">Rating</string>
     <string name="wine_price">Price</string>

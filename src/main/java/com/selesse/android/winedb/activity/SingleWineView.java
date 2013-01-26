@@ -18,10 +18,22 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.selesse.android.winedb.R;
+import com.selesse.android.winedb.model.RequestCode;
 import com.selesse.android.winedb.model.Wine;
+import com.selesse.android.winedb.util.WineDatabase;
+import com.selesse.android.winedb.util.impl.sqlite.WinesDataSource;
 
 public class SingleWineView extends Activity {
   Wine wine = null;
+  TextView nameText = null;
+  TextView countryText = null;
+  TextView yearText = null;
+  TextView colorText = null;
+  TextView descText = null;
+  TextView ratingText = null;
+  TextView priceText = null;
+  TextView commentText = null;
+  ImageView image = null;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -34,14 +46,15 @@ public class SingleWineView extends Activity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.single_wine);
 
-    TextView nameText = (TextView) findViewById(R.id.wineNameText);
-    TextView countryText = (TextView) findViewById(R.id.countryText);
-    TextView yearText = (TextView) findViewById(R.id.yearText);
-    TextView descText = (TextView) findViewById(R.id.descText);
-    TextView ratingText = (TextView) findViewById(R.id.ratingText);
-    TextView priceText = (TextView) findViewById(R.id.priceText);
-    TextView commentText = (TextView) findViewById(R.id.commentText);
-    ImageView image = (ImageView) findViewById(R.id.image);
+    nameText = (TextView) findViewById(R.id.wineNameText);
+    countryText = (TextView) findViewById(R.id.countryText);
+    yearText = (TextView) findViewById(R.id.yearText);
+    colorText = (TextView) findViewById(R.id.colorText);
+    descText = (TextView) findViewById(R.id.descText);
+    ratingText = (TextView) findViewById(R.id.ratingText);
+    priceText = (TextView) findViewById(R.id.priceText);
+    commentText = (TextView) findViewById(R.id.commentText);
+    image = (ImageView) findViewById(R.id.image);
     Button editButton = (Button) findViewById(R.id.editWine);
 
     editButton.setOnClickListener(new View.OnClickListener() {
@@ -50,9 +63,14 @@ public class SingleWineView extends Activity {
       public void onClick(View v) {
         Intent i = new Intent(getBaseContext(), CreateOrEditWineActivity.class);
         i.putExtra("wine", wine);
-        startActivity(i);
+        startActivityForResult(i, RequestCode.EDIT_WINE.ordinal());
       }
     });
+
+    updateView(wine);
+  }
+
+  private void updateView(Wine wine) {
 
     if (wine.getName() != null && !wine.getName().equals("")) {
       nameText.setText(wine.getName());
@@ -62,6 +80,9 @@ public class SingleWineView extends Activity {
     }
     if (wine.getYear() > 1500) {
       yearText.setText(String.valueOf(wine.getYear()));
+    }
+    if (wine.getColor() != Wine.WineColor.UNKNOWN) {
+      colorText.setText(wine.getColor().toString());
     }
     if (wine.getDescription() != null && !wine.getDescription().equals("")) {
       descText.setText(wine.getDescription());
@@ -86,7 +107,7 @@ public class SingleWineView extends Activity {
       BitmapFactory.Options bmOptions;
       bmOptions = new BitmapFactory.Options();
       bmOptions.inSampleSize = 1;
-      Bitmap bm = LoadImage(wine.getImageURL(), bmOptions);
+      Bitmap bm = loadImage(wine.getImageURL(), bmOptions);
       if (bm != null) {
         image.setImageBitmap(bm);
         // TODO make this run in a separate thread
@@ -94,11 +115,29 @@ public class SingleWineView extends Activity {
     }
   }
 
-  private Bitmap LoadImage(String URL, Options options) {
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+
+    if (requestCode == RequestCode.EDIT_WINE.ordinal() && resultCode == Activity.RESULT_OK) {
+      Bundle bundle = data.getExtras();
+      wine = (Wine) bundle.get("wine");
+
+      // create a database instance, update the wine in the db and update the view for it
+      WineDatabase db = new WinesDataSource(getApplicationContext());
+      db.open();
+      db.updateWine(wine);
+      db.close();
+
+      updateView(wine);
+    }
+  }
+
+  private Bitmap loadImage(String imageUrl, Options options) {
     Bitmap bitmap = null;
     InputStream in = null;
     try {
-      in = OpenHttpConnection(URL);
+      in = openHttpConnection(imageUrl);
       if (in == null) {
         return bitmap;
       }
@@ -111,10 +150,10 @@ public class SingleWineView extends Activity {
     return bitmap;
   }
 
-  private InputStream OpenHttpConnection(String strURL) {
+  private InputStream openHttpConnection(String streamUrl) {
     InputStream inputStream = null;
     try {
-      URL url = new URL(strURL);
+      URL url = new URL(streamUrl);
       URLConnection conn = url.openConnection();
 
       HttpURLConnection httpConn = (HttpURLConnection) conn;

@@ -46,4 +46,12 @@ public interface WineDatabase {
    * Close the connection to the database.
    */
   void close();
+
+  /**
+   * Update the Wine (assuming that they have a valid id) to have new attributes.
+   *
+   * @param Wine
+   *          The wine you'd like to update with the new attributes.
+   */
+  void updateWine(Wine wine);
 }

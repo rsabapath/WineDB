@@ -127,4 +127,10 @@ public class FlatFileWineDatabase implements WineDatabase {
     return this.wines;
   }
 
+  @Override
+  public void updateWine(Wine wine) {
+    deleteWine(wine);
+    createWine(wine);
+  }
+
 }

@@ -1,6 +1,7 @@
 package com.selesse.android.winedb.util.impl.sqlite;
 
 import java.util.List;
+import java.util.Locale;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -113,7 +114,7 @@ public class WinesDataSource implements WineDatabase {
     wine.setPrice(cursor.getString(8));
     wine.setYear(cursor.getInt(9));
     try {
-      wine.setColor(WineColor.valueOf(cursor.getString(10)));
+      wine.setColor(WineColor.valueOf(cursor.getString(10).toUpperCase(Locale.getDefault())));
     }
     catch (IllegalArgumentException e) {
       wine.setColor(WineColor.UNKNOWN);
@@ -122,4 +123,23 @@ public class WinesDataSource implements WineDatabase {
     return wine;
   }
 
+  @Override
+  public void updateWine(Wine wine) {
+    ContentValues values = new ContentValues();
+
+    values.put(WineSQLiteHelper.COLUMN_BARCODE, wine.getBarcode());
+    values.put(WineSQLiteHelper.COLUMN_NAME, wine.getName());
+    values.put(WineSQLiteHelper.COLUMN_RATING, wine.getRating());
+    values.put(WineSQLiteHelper.COLUMN_COMMENT, wine.getComment());
+    values.put(WineSQLiteHelper.COLUMN_COUNTRY, wine.getCountry());
+    values.put(WineSQLiteHelper.COLUMN_DESCRIPTION, wine.getDescription());
+    values.put(WineSQLiteHelper.COLUMN_IMAGE_URL, wine.getImageURL());
+    values.put(WineSQLiteHelper.COLUMN_PRICE, wine.getPrice());
+    values.put(WineSQLiteHelper.COLUMN_YEAR, wine.getYear());
+    values.put(WineSQLiteHelper.COLUMN_COLOR, wine.getColor().toString());
+
+    db.update(WineSQLiteHelper.TABLE_WINES, values,
+        WineSQLiteHelper.COLUMN_ID + " = " + wine.getId(), null);
+
+  }
 }

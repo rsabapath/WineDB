@@ -152,7 +152,7 @@ public class CreateOrEditWineActivity extends Activity {
         }
 
         Intent data = new Intent();
-        data.putExtra("Wine", wine);
+        data.putExtra("wine", wine);
         setResult(RESULT_OK, data);
         finish();
       }

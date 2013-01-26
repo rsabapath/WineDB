@@ -112,7 +112,9 @@ public class Wine implements Serializable {
     UNKNOWN(""),
     RED("Red"),
     WHITE("White"),
-    ROSE("Rose");
+    ROSE("Rose"),
+    PORT("Port"),
+    SPARKLING("Sparkling");
 
     String name;
 
@@ -212,6 +214,14 @@ public class Wine implements Serializable {
 
   public void setId(long id) {
     this.id = id;
+  }
+
+  @Override
+  public String toString() {
+    return "Wine [id=" + id + ", barcode=" + barcode + ", name=" + name + ", rating=" + rating
+        + ", comment=" + comment + ", country=" + country + ", description=" + description
+        + ", imageURL=" + imageURL + ", price=" + price + ", year=" + year + ", color=" + color
+        + "]";
   }
 
 }
