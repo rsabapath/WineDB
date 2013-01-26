@@ -24,5 +24,6 @@
     <string name="add_wine">Add wine</string>
     <string name="sort_wines">Sort</string>
     <string name="help">Help</string>
+    <string name="empty_name">Your wine name cannot be empty!</string>
 
 </resources>

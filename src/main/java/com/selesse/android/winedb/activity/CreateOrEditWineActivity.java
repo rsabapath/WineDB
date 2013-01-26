@@ -7,7 +7,9 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.selesse.android.winedb.R;
 import com.selesse.android.winedb.model.Wine;
@@ -29,6 +31,10 @@ public class CreateOrEditWineActivity extends Activity {
     if (bundle != null) {
       wine = (Wine) bundle.getSerializable("wine");
       editMode = true;
+    }
+
+    if (savedInstanceState != null) {
+      wine = (Wine) savedInstanceState.getSerializable("onsave_wine");
     }
 
     if (wine == null) {
@@ -93,6 +99,16 @@ public class CreateOrEditWineActivity extends Activity {
 
       @Override
       public void onClick(View v) {
+        if (nameText.getText().toString().trim().length() == 0) {
+          Toast.makeText(getApplicationContext(), R.string.empty_name, Toast.LENGTH_SHORT).show();
+          nameText.setFocusableInTouchMode(true);
+          nameText.requestFocus();
+
+          ScrollView scrollView = (ScrollView) findViewById(R.id.edit_wine_scrollview);
+          scrollView.scrollTo(0, 0);
+          return;
+        }
+
         if (barcodeText.getText().toString().length() > 0) {
           wine.setBarcode(barcodeText.getText().toString());
         }
@@ -140,6 +156,13 @@ public class CreateOrEditWineActivity extends Activity {
       }
     });
 
+  }
+
+  @Override
+  protected void onSaveInstanceState(Bundle outState) {
+    super.onSaveInstanceState(outState);
+
+    outState.putSerializable("onsave_wine", wine);
   }
 
 }
