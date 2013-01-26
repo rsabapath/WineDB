@@ -34,25 +34,24 @@ import com.selesse.android.winedb.util.impl.sqlite.WinesDataSource;
 import com.selesse.android.winedb.winescraper.WineScrapers;
 
 public class WineDB extends ListActivity {
-  
-  private WineDatabase dataSource;
+
+  private WineDatabase wineDatabase;
   private List<Wine> wines;
   private WineAdapter wineAdapter;
   private Wine tempWine;
 
-  /** Called when the activity is first created. */
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.main);
-    
+
     final Activity activity = this;
-    
-    // initialize the
-    dataSource = new WinesDataSource(this);
-    dataSource.open();
-    
-    wines = dataSource.getAllWines();
+
+    // initialize the database - this particular implementation is an SQLite DB
+    wineDatabase = new WinesDataSource(this);
+    wineDatabase.open();
+
+    wines = wineDatabase.getAllWines();
 
     wineAdapter = new WineAdapter(this, R.layout.rows, wines);
     setListAdapter(wineAdapter);
@@ -76,7 +75,7 @@ public class WineDB extends ListActivity {
       @Override
       public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         // go through all the WineContextMenu enum, make them clickable items
-        
+
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
 
         int id = (int) info.id;
@@ -117,7 +116,8 @@ public class WineDB extends ListActivity {
     switch (selectedItem) {
       case DELETE:
         Wine delete_wine = wines.get(wineID);
-        dataSource.deleteWine(delete_wine);
+        wineDatabase.deleteWine(delete_wine);
+        wines.remove(wineID);
         wineAdapter.notifyDataSetChanged();
         Toast.makeText(
             this,
@@ -126,7 +126,7 @@ public class WineDB extends ListActivity {
             Toast.LENGTH_SHORT).show();
         break;
       case EDIT:
-        Intent i = new Intent(this, EditWineView.class);
+        Intent i = new Intent(this, CreateOrEditWineActivity.class);
         i.putExtra("wine", wines.get(wineID));
         tempWine = wines.remove(wineID);
         startActivityForResult(i, RequestCode.DELETE_THEN_EDIT.ordinal());
@@ -141,31 +141,38 @@ public class WineDB extends ListActivity {
     IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCodeNumber, resultCode,
         intent);
 
-    if (requestCodeNumber == IntentIntegrator.REQUEST_CODE && scanResult.getContents() == null)
+    // do nothing when the user doesn't scan anything
+    if (requestCodeNumber == IntentIntegrator.REQUEST_CODE && scanResult.getContents() == null) {
       return;
+    }
+    // case where zxing was called and successfully scanned something
     else if (requestCodeNumber == IntentIntegrator.REQUEST_CODE) {
-      Wine wine = getWineFromResults(scanResult.getContents());
-      // TODO edit, add, etc
-      Intent i = new Intent(this, EditWineView.class);
-      i.putExtra("wine", wine);
-      startActivityForResult(i, RequestCode.EDIT_WINE.ordinal());
+      // extract the wine object from barcode (presumably by going through a bunch of sources)
+      Wine wine = getWineFromBarcode(scanResult.getContents());
+
+      Intent editIntent = new Intent(this, CreateOrEditWineActivity.class);
+      editIntent.putExtra("wine", wine);
+      startActivityForResult(editIntent, RequestCode.EDIT_WINE.ordinal());
       return;
     }
 
+    // this is a request code made for the winedb application, figure out which one
     RequestCode requestCode = RequestCode.values()[requestCodeNumber];
 
     if (requestCode == RequestCode.EDIT_WINE || requestCode == RequestCode.DELETE_THEN_EDIT) {
       // this is a returned wine
       if (resultCode == RESULT_OK) {
         Bundle bundle = intent.getExtras();
-        Wine w = (Wine) bundle.get("Wine");
-        dataSource.createWine(w);
+        Wine wine = (Wine) bundle.get("Wine");
+        wine = wineDatabase.createWine(wine);
+        wines.add(wine);
         wineAdapter.notifyDataSetChanged();
         return;
       }
       else {
         if (requestCode == RequestCode.DELETE_THEN_EDIT) {
-          dataSource.createWine(tempWine);
+          Wine wine = wineDatabase.createWine(tempWine);
+          wines.add(wine);
           wineAdapter.notifyDataSetChanged();
           return;
         }
@@ -174,8 +181,7 @@ public class WineDB extends ListActivity {
     }
   }
 
-  private Wine getWineFromResults(String barcode) {
-
+  private Wine getWineFromBarcode(String barcode) {
     if (Pattern.matches("[0-9]{1,13}", barcode)) {
       WineScrapers scrapers = new WineScrapers(barcode);
       List<Wine> wines = scrapers.scrape();
@@ -187,19 +193,21 @@ public class WineDB extends ListActivity {
       Log.v("WineScanner", "Failed to find UPC Code");
     }
 
-    Log.v("WineScanner", barcode.toString());
-    return null;
+    // default is to just return the wine with the barcode
+    Wine wine = new Wine();
+    wine.setBarcode(barcode);
+    return wine;
   }
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
-    MenuItem addItem = menu.add("Add wine");
+    MenuItem addItem = menu.add(R.string.add_wine);
     addItem.setIcon(android.R.drawable.ic_menu_add);
 
-    MenuItem sortItem = menu.add("Sort");
+    MenuItem sortItem = menu.add(R.string.sort_wines);
     sortItem.setIcon(android.R.drawable.ic_menu_sort_alphabetically);
 
-    MenuItem helpItem = menu.add("Help");
+    MenuItem helpItem = menu.add(R.string.help);
     helpItem.setIcon(android.R.drawable.ic_menu_help);
 
     return true;
@@ -222,8 +230,8 @@ public class WineDB extends ListActivity {
       wineAdapter.notifyDataSetChanged();
     }
     else if (item.getTitle().equals("Add wine")) {
-      Intent i = new Intent(this, EditWineView.class);
-      startActivityForResult(i, RequestCode.EDIT_WINE.ordinal());
+      Intent intent = new Intent(this, CreateOrEditWineActivity.class);
+      startActivityForResult(intent, RequestCode.EDIT_WINE.ordinal());
     }
 
     return true;

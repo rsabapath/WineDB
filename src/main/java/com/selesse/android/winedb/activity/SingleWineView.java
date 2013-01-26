@@ -48,7 +48,7 @@ public class SingleWineView extends Activity {
 
       @Override
       public void onClick(View v) {
-        Intent i = new Intent(getBaseContext(), EditWineView.class);
+        Intent i = new Intent(getBaseContext(), CreateOrEditWineActivity.class);
         i.putExtra("wine", wine);
         startActivity(i);
       }

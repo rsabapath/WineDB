@@ -53,6 +53,9 @@ public class GoogleShopperWineScraper implements WineScraper {
     catch (IOException e) {
       errors.add(e);
     }
+    catch (Exception e) {
+      // have to catch Exceptions because builds >= honeycomb can throw NetworkOnMainThreadException
+    }
 
     return scrapedWines;
   }

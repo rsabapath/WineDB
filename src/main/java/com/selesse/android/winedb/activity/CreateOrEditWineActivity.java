@@ -13,24 +13,25 @@ import com.selesse.android.winedb.R;
 import com.selesse.android.winedb.model.Wine;
 import com.selesse.android.winedb.model.Wine.WineColor;
 
-public class EditWineView extends Activity {
+public class CreateOrEditWineActivity extends Activity {
 
   Wine wine = null;
   EditText barcodeText, nameText, countryText, yearText, descText, ratingText, priceText,
       commentText, imageText;
   Spinner spinner;
-  boolean editMode;
+  boolean editMode = false;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
-
     Bundle bundle = this.getIntent().getExtras();
+
+    // if the bundle isn't null, we know we're editing something
     if (bundle != null) {
       wine = (Wine) bundle.getSerializable("wine");
       editMode = true;
     }
-    else {
-      editMode = false;
+
+    if (wine == null) {
       wine = new Wine();
     }
 
@@ -53,6 +54,7 @@ public class EditWineView extends Activity {
     spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     spinner.setAdapter(spinnerArrayAdapter);
 
+    // if we're in edit mode, go through all the fields - if they're valid, display them
     if (editMode) {
       if (!wine.getBarcode().equals("")) {
         barcodeText.setText(wine.getBarcode());

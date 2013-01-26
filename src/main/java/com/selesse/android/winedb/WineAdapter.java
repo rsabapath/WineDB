@@ -1,6 +1,5 @@
 package com.selesse.android.winedb;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
@@ -21,7 +20,7 @@ public class WineAdapter extends ArrayAdapter<Wine> {
     this.wines = wines;
   }
 
-  public void changeData(ArrayList<Wine> wine) {
+  public void changeData(List<Wine> wine) {
     this.wines = wine;
     notifyDataSetChanged();
   }
@@ -40,7 +39,8 @@ public class WineAdapter extends ArrayAdapter<Wine> {
   public View getView(int position, View convertView, ViewGroup parent) {
     View view = convertView;
     if (view == null) {
-      LayoutInflater vi = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+      LayoutInflater vi = (LayoutInflater) getContext().getSystemService(
+          Context.LAYOUT_INFLATER_SERVICE);
       view = vi.inflate(R.layout.rows, null);
     }
 

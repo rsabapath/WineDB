@@ -21,6 +21,7 @@
         android:icon="@drawable/icon"
         android:label="@string/app_name" >
         <uses-library android:name="android.test.runner" />
+
         <activity
             android:name=".activity.WineDB"
             android:configChanges="orientation|keyboardHidden"
@@ -43,7 +44,7 @@
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
-            android:name=".activity.EditWineView"
+            android:name="com.selesse.android.winedb.activity.CreateOrEditWineActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
