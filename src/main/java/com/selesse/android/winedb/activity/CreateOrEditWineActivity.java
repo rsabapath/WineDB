@@ -99,6 +99,8 @@ public class CreateOrEditWineActivity extends Activity {
 
       @Override
       public void onClick(View v) {
+
+        // make sure that if you're pressing save, you save a name
         if (nameText.getText().toString().trim().length() == 0) {
           Toast.makeText(getApplicationContext(), R.string.empty_name, Toast.LENGTH_SHORT).show();
           nameText.setFocusableInTouchMode(true);
