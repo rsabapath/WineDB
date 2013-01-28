@@ -12,16 +12,30 @@ public class Wine implements Serializable {
 
   private static final long serialVersionUID = 231532486466908646L;
   private long id;
-  private String barcode = "";
-  private String name = "";
-  private int rating = -1;
-  private String comment = "";
-  private String country = "";
-  private String description = "";
-  private String imageURL = "";
-  private String price = "";
-  private int year = -1;
-  private WineColor color = WineColor.UNKNOWN;
+  private String barcode;
+  private String name;
+  private int rating;
+  private String comment;
+  private String country;
+  private String description;
+  private String imageURL;
+  private String price;
+  private int year;
+  private WineColor color;
+
+  public Wine() {
+    id = 0;
+    barcode = "";
+    name = "";
+    rating = -1;
+    comment = "";
+    country = "";
+    description = "";
+    imageURL = "";
+    price = "";
+    year = -1;
+    color = WineColor.UNKNOWN;
+  }
 
   public enum Attribute {
     BARCODE("Barcode"),
