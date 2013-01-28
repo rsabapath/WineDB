@@ -1,12 +1,8 @@
-package com.selesse.android.winedb.util.impl.sqlite;
+package com.selesse.android.winedb.database.sqlite;
 
-import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
-public class WineSQLiteHelper extends SQLiteOpenHelper {
-
+public class WineTable {
   public static final String TABLE_WINES = "wines";
   public static final String COLUMN_ID = "_id";
   public static final String COLUMN_BARCODE = "barcode";
@@ -20,30 +16,18 @@ public class WineSQLiteHelper extends SQLiteOpenHelper {
   public static final String COLUMN_YEAR = "year";
   public static final String COLUMN_COLOR = "color";
 
-  private static final String DATABASE_NAME = "wines.db";
-  private static final int DATABASE_VERSION = 1;
-
   private static final String DATABASE_CREATE = "create table " + TABLE_WINES + "(" + COLUMN_ID
       + " integer primary key autoincrement, " + COLUMN_BARCODE + " text not null, " + COLUMN_NAME
       + " text, " + COLUMN_RATING + " integer, " + COLUMN_COMMENT + " text, " + COLUMN_COUNTRY
       + " text, " + COLUMN_DESCRIPTION + " text, " + COLUMN_IMAGE_URL + " text," + COLUMN_PRICE
       + " text," + COLUMN_YEAR + " integer, " + COLUMN_COLOR + " text);";
 
-  public WineSQLiteHelper(Context context) {
-    super(context, DATABASE_NAME, null, DATABASE_VERSION);
+  public static void onCreate(SQLiteDatabase database) {
+    database.execSQL(DATABASE_CREATE);
   }
 
-  @Override
-  public void onCreate(SQLiteDatabase db) {
-    db.execSQL(DATABASE_CREATE);
+  public static void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
+    database.execSQL("DROP TABLE IF EXISTS " + TABLE_WINES);
+    onCreate(database);
   }
-
-  @Override
-  public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-    Log.w(WineSQLiteHelper.class.getName(), "Upgrading database from version " + oldVersion
-        + " to " + newVersion + ", which will destroy all old data");
-    db.execSQL("DROP TABLE IF EXISTS " + TABLE_WINES);
-    onCreate(db);
-  }
-
 }

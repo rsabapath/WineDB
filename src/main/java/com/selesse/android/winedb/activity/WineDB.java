@@ -1,13 +1,12 @@
 package com.selesse.android.winedb.activity;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Pattern;
 
 import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -20,25 +19,29 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.selesse.android.winedb.R;
-import com.selesse.android.winedb.WineAdapter;
+import com.selesse.android.winedb.database.WineDatabase;
+import com.selesse.android.winedb.database.sqlite.WineTable;
+import com.selesse.android.winedb.database.sqlite.WinesDataSource;
 import com.selesse.android.winedb.model.RequestCode;
 import com.selesse.android.winedb.model.Wine;
 import com.selesse.android.winedb.model.WineContextMenu;
-import com.selesse.android.winedb.util.WineDatabase;
-import com.selesse.android.winedb.util.impl.sqlite.WinesDataSource;
 import com.selesse.android.winedb.winescraper.WineScrapers;
 
 public class WineDB extends ListActivity {
 
   private WineDatabase wineDatabase;
-  private List<Wine> wines;
-  private WineAdapter wineAdapter;
+  private Cursor cursor;
+  private SimpleCursorAdapter adapter;
 
+  // deprecated because we're using a deprecated SimpleCursorAdapter constructor for 2.3+
+  // compatibility
+  @SuppressWarnings("deprecation")
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -50,10 +53,15 @@ public class WineDB extends ListActivity {
     wineDatabase = new WinesDataSource(this);
     wineDatabase.open();
 
-    wines = wineDatabase.getAllWines();
+    cursor = wineDatabase.getAllWines();
+    startManagingCursor(cursor);
 
-    wineAdapter = new WineAdapter(this, R.layout.rows, wines);
-    setListAdapter(wineAdapter);
+    String[] from = { WineTable.COLUMN_NAME, WineTable.COLUMN_COLOR };
+    int[] to = { R.id.name, R.id.wine_color };
+
+    adapter = new SimpleCursorAdapter(this, R.layout.rows, cursor, from, to);
+
+    setListAdapter(adapter);
 
     ListView listView = getListView();
 
@@ -61,10 +69,10 @@ public class WineDB extends ListActivity {
       @Override
       public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         // get the wine at that position and pass it to the view single wine activity
-        Wine displayedWine = wines.get(position);
+        Wine wine = getWine(position);
 
         Intent intent = new Intent(activity, SingleWineView.class);
-        intent.putExtra("wine", displayedWine);
+        intent.putExtra("wine", wine);
         startActivity(intent);
       }
     });
@@ -77,13 +85,12 @@ public class WineDB extends ListActivity {
 
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
 
-        int id = (int) info.id;
+        Wine wine = getWine(info.position);
 
-        menu.setHeaderTitle(wines.get(id).getName()
-            .substring(0, Math.min(wines.get(id).getName().length(), 22)));
+        menu.setHeaderTitle(wine.getName().substring(0, Math.min(wine.getName().length(), 22)));
 
         for (WineContextMenu contextMenuItem : WineContextMenu.values()) {
-          menu.add(0, id, contextMenuItem.ordinal(), contextMenuItem.toString());
+          menu.add(0, info.position, contextMenuItem.ordinal(), contextMenuItem.toString());
         }
       }
     });
@@ -108,26 +115,24 @@ public class WineDB extends ListActivity {
     AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item
         .getMenuInfo();
 
-    int winePositionIndex = (int) info.id;
+    int winePositionIndex = (int) info.position;
 
     WineContextMenu selectedItem = WineContextMenu.values()[item.getOrder()];
 
     switch (selectedItem) {
       case DELETE:
-        Wine delete_wine = wines.get(winePositionIndex);
-        wineDatabase.deleteWine(delete_wine);
-        wines.remove(winePositionIndex);
-        wineAdapter.notifyDataSetChanged();
+        Wine delete_wine = getWine(winePositionIndex);
         Toast.makeText(
             this,
             "Deleted "
                 + delete_wine.getName().substring(0, Math.min(40, delete_wine.getName().length())),
             Toast.LENGTH_SHORT).show();
+        wineDatabase.deleteWine(delete_wine);
+        refreshWines();
         break;
       case EDIT:
         Intent i = new Intent(this, CreateOrEditWineActivity.class);
-        i.putExtra("wine", wines.get(winePositionIndex));
-        wines.remove(winePositionIndex);
+        i.putExtra("wine", getWine(winePositionIndex));
         startActivityForResult(i, RequestCode.EDIT_WINE.ordinal());
         break;
     }
@@ -178,10 +183,14 @@ public class WineDB extends ListActivity {
         else {
           wineDatabase.updateWine(wine);
         }
-        wines.add(wine);
-        wineAdapter.notifyDataSetChanged();
       }
+      refreshWines();
     }
+  }
+
+  @SuppressWarnings("deprecation")
+  private void refreshWines() {
+    cursor.requery();
   }
 
   private Wine getWineFromBarcode(String barcode) {
@@ -223,14 +232,7 @@ public class WineDB extends ListActivity {
       Toast.makeText(this, "Only losers need help", Toast.LENGTH_LONG).show();
     }
     else if (item.getTitle().equals("Sort")) {
-      // TODO sort by name works for now, let's do rest later
-      Collections.sort(wines, new Comparator<Wine>() {
-        @Override
-        public int compare(Wine wine1, Wine wine2) {
-          return wine1.getName().compareTo(wine2.getName());
-        }
-      });
-      wineAdapter.notifyDataSetChanged();
+      // TODO FIXME
     }
     else if (item.getTitle().equals("Add wine")) {
       Intent intent = new Intent(this, CreateOrEditWineActivity.class);
@@ -238,5 +240,10 @@ public class WineDB extends ListActivity {
     }
 
     return true;
+  }
+
+  private Wine getWine(int position) {
+    Cursor cursor = (Cursor) adapter.getItem(position);
+    return wineDatabase.cursorToWine(cursor);
   }
 }

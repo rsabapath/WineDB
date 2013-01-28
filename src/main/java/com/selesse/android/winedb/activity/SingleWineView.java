@@ -18,10 +18,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.selesse.android.winedb.R;
+import com.selesse.android.winedb.database.WineDatabase;
+import com.selesse.android.winedb.database.sqlite.WinesDataSource;
 import com.selesse.android.winedb.model.RequestCode;
 import com.selesse.android.winedb.model.Wine;
-import com.selesse.android.winedb.util.WineDatabase;
-import com.selesse.android.winedb.util.impl.sqlite.WinesDataSource;
 
 public class SingleWineView extends Activity {
   Wine wine = null;

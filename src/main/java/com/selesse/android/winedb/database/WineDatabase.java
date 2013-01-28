@@ -1,6 +1,6 @@
-package com.selesse.android.winedb.util;
+package com.selesse.android.winedb.database;
 
-import java.util.List;
+import android.database.Cursor;
 
 import com.selesse.android.winedb.model.Wine;
 
@@ -30,14 +30,6 @@ public interface WineDatabase {
   Wine createWine(Wine wine);
 
   /**
-   * Return the list of loaded wines from the database. The list will be empty if there are no
-   * wines.
-   *
-   * @return A list of the user's wines.
-   */
-  List<Wine> getAllWines();
-
-  /**
    * Open the connection to the database.
    */
   void open();
@@ -54,4 +46,8 @@ public interface WineDatabase {
    *          The wine you'd like to update with the new attributes.
    */
   void updateWine(Wine wine);
+  
+  Cursor getAllWines();
+  
+  Wine cursorToWine(Cursor cursor);
 }
