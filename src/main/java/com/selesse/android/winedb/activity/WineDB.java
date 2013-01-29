@@ -3,11 +3,14 @@ package com.selesse.android.winedb.activity;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -48,6 +51,10 @@ public class WineDB extends ListActivity {
     setContentView(R.layout.main);
 
     final Activity activity = this;
+
+    if (android.os.Build.VERSION.SDK_INT > 9) {
+      ignoreNetworkOnMainThread();
+    }
 
     // initialize the database - this particular implementation is an SQLite DB
     wineDatabase = new WinesDataSource(this);
@@ -108,6 +115,12 @@ public class WineDB extends ListActivity {
 
   }
 
+  @TargetApi(Build.VERSION_CODES.GINGERBREAD)
+  private void ignoreNetworkOnMainThread() {
+    StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+    StrictMode.setThreadPolicy(policy);
+  }
+
   @Override
   public boolean onContextItemSelected(MenuItem item) {
     super.onContextItemSelected(item);
@@ -115,7 +128,7 @@ public class WineDB extends ListActivity {
     AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item
         .getMenuInfo();
 
-    int winePositionIndex = (int) info.position;
+    int winePositionIndex = info.position;
 
     WineContextMenu selectedItem = WineContextMenu.values()[item.getOrder()];
 

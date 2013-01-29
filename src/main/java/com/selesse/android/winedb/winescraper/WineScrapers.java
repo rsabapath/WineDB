@@ -5,6 +5,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.selesse.android.winedb.model.Wine;
 import com.selesse.android.winedb.winescraper.impl.GoogleShopperWineScraper;
+import com.selesse.android.winedb.winescraper.impl.UPCDatabaseWineScraper;
 
 /**
  * Collection of wine scrapers that uses 1 or more wine scrapers to return results.
@@ -18,8 +19,9 @@ public class WineScrapers {
 
   public WineScrapers(String barcode) {
     WineScraper googleWineScraper = new GoogleShopperWineScraper(barcode);
+    UPCDatabaseWineScraper upcScraper = new UPCDatabaseWineScraper(barcode);
 
-    this.wineScrapers = Lists.newArrayList(googleWineScraper);
+    this.wineScrapers = Lists.newArrayList(googleWineScraper, upcScraper);
   }
 
   public List<Wine> scrape() {

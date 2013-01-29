@@ -14,9 +14,10 @@ public class GoogleShopperWineScraperTest extends AndroidTestCase {
     String barcode = "8410113003027";
     GoogleShopperWineScraper scraper = new GoogleShopperWineScraper(barcode);
 
-    String expectedUrl = String.format(
-        "https://www.googleapis.com/shopping/search/v1/public/products?country=US&language=en&q=%s&key=%s", barcode,
-        GoogleShopperKey.getKey());
+    String expectedUrl = String
+        .format(
+            "https://www.googleapis.com/shopping/search/v1/public/products?country=US&language=en&q=%s&key=%s",
+            barcode, GoogleShopperKey.getKey());
 
     assertEquals(expectedUrl, scraper.getQueryUrl());
   }

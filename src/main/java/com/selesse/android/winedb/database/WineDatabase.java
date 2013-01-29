@@ -46,8 +46,8 @@ public interface WineDatabase {
    *          The wine you'd like to update with the new attributes.
    */
   void updateWine(Wine wine);
-  
+
   Cursor getAllWines();
-  
+
   Wine cursorToWine(Cursor cursor);
 }
