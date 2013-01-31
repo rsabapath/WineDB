@@ -6,12 +6,13 @@ import java.util.regex.Pattern;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ListActivity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -169,11 +170,18 @@ public class WineDB extends ListActivity {
     // case where zxing was called and successfully scanned something
     else if (requestCodeNumber == IntentIntegrator.REQUEST_CODE) {
       // extract the wine object from barcode (presumably by going through a bunch of sources)
-      Wine wine = getWineFromBarcode(scanResult.getContents());
+      String barcode = scanResult.getContents();
 
-      Intent editIntent = new Intent(this, CreateOrEditWineActivity.class);
-      editIntent.putExtra("wine", wine);
-      startActivityForResult(editIntent, RequestCode.EDIT_WINE.ordinal());
+      // we'll only use the scrapers if it looks like it'll match approximately match UPC
+      if (Pattern.matches("[0-9]{1,13}", barcode)) {
+        scrapeWinesAndEditWine(barcode);
+      }
+      else {
+        Wine wine = new Wine();
+        wine.setBarcode(barcode);
+        startCreateNewWineIntent(wine);
+      }
+
       return;
     }
 
@@ -206,22 +214,65 @@ public class WineDB extends ListActivity {
     cursor.requery();
   }
 
-  private Wine getWineFromBarcode(String barcode) {
-    if (Pattern.matches("[0-9]{1,13}", barcode)) {
-      WineScrapers scrapers = new WineScrapers(barcode);
-      List<Wine> wines = scrapers.scrape();
-      if (wines.size() > 0) {
-        return wines.get(0);
-      }
-    }
-    else {
-      Log.v("WineScanner", "Failed to find UPC Code");
+  /**
+   * Create an AsyncTask to go scrape wines for us. The real magic happens in
+   * {@link WineScraperThread}.
+   *
+   * @param barcode
+   *          The barcode of the wine we'll be scraping.
+   */
+  private void scrapeWinesAndEditWine(String barcode) {
+    AsyncTask<String, Void, List<Wine>> task = new WineScraperThread();
+    task.execute(barcode);
+  }
+
+  private class WineScraperThread extends AsyncTask<String, Void, List<Wine>> {
+
+    private ProgressDialog progress;
+    private String barcode;
+
+    @Override
+    protected void onPreExecute() {
+      super.onPreExecute();
+      progress = new ProgressDialog(WineDB.this);
+      progress.setMessage(getString(R.string.scraping));
+      progress.setIndeterminate(true);
+      progress.show();
     }
 
-    // default is to just return the wine with the barcode
-    Wine wine = new Wine();
-    wine.setBarcode(barcode);
-    return wine;
+    @Override
+    protected List<Wine> doInBackground(String... params) {
+      barcode = params[0];
+      WineScrapers scrapers = new WineScrapers(barcode);
+      List<Wine> wines = scrapers.scrape();
+
+      return wines;
+    }
+
+    @Override
+    protected void onPostExecute(List<Wine> result) {
+      super.onPostExecute(result);
+      progress.dismiss();
+
+      Wine wine = null;
+      if (result.size() == 0) {
+        wine = new Wine();
+        wine.setBarcode(barcode);
+      }
+      // for now we'll just grab the first result, we can do something more sophisticated later
+      else {
+        wine = result.get(0);
+      }
+
+      startCreateNewWineIntent(wine);
+    }
+
+  }
+
+  public void startCreateNewWineIntent(Wine wine) {
+    Intent editIntent = new Intent(this, CreateOrEditWineActivity.class);
+    editIntent.putExtra("wine", wine);
+    startActivityForResult(editIntent, RequestCode.EDIT_WINE.ordinal());
   }
 
   @Override

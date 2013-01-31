@@ -21,10 +21,12 @@ public class UPCDatabaseWineScraper implements WineScraper {
 
   private String url;
   private List<Exception> errors;
-  private List<Wine> wines;
+  private String barcode;
 
   public UPCDatabaseWineScraper(String barcode) {
+    this.barcode = barcode;
     url = "http://www.upcdatabase.com/item/" + barcode;
+    errors = Lists.newArrayList();
   }
 
   @Override
@@ -42,11 +44,35 @@ public class UPCDatabaseWineScraper implements WineScraper {
       }
 
       Document document = Jsoup.parse(rawHtml);
+
       Elements table = document.select("table.data");
+      // if we don't have any table data, we didn't find the wine in the UPC database
+      if (table.size() == 0) {
+        errors.add(new Exception("Wine was not found!"));
+        return scrapedWines;
+      }
+
+      Wine wine = new Wine();
+      wine.setBarcode(barcode);
+
       Elements rows = table.select("tr");
-      
-      // need the Description
-      
+
+      // the rows in the result have 3 <td>s: 1st is key, 3rd is value
+      for (Element tr : rows) {
+        Elements tds = tr.select("td");
+        for (int i = 0; i < tds.size(); i++) {
+          Element td = tds.get(i);
+          // set the name to the description, it is usually short enough to fit in name
+          if (td.text().contains("Description")) {
+            wine.setName(tds.get(i + 2).text());
+          }
+          else if (td.text().contains("Country")) {
+            wine.setCountry(tds.get(i + 2).text());
+          }
+        }
+      }
+
+      scrapedWines.add(wine);
     }
     catch (MalformedURLException e) {
       errors.add(e);
