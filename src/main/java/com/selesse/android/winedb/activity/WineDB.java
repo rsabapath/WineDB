@@ -3,16 +3,13 @@ package com.selesse.android.winedb.activity;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -52,10 +49,6 @@ public class WineDB extends ListActivity {
     setContentView(R.layout.main);
 
     final Activity activity = this;
-
-    if (android.os.Build.VERSION.SDK_INT > 9) {
-      ignoreNetworkOnMainThread();
-    }
 
     // initialize the database - this particular implementation is an SQLite DB
     wineDatabase = new WinesDataSource(this);
@@ -114,12 +107,6 @@ public class WineDB extends ListActivity {
       }
     });
 
-  }
-
-  @TargetApi(Build.VERSION_CODES.GINGERBREAD)
-  private void ignoreNetworkOnMainThread() {
-    StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-    StrictMode.setThreadPolicy(policy);
   }
 
   @Override
@@ -209,83 +196,17 @@ public class WineDB extends ListActivity {
     }
   }
 
-  @SuppressWarnings("deprecation")
-  private void refreshWines() {
-    cursor.requery();
-  }
-
-  /**
-   * Create an AsyncTask to go scrape wines for us. The real magic happens in
-   * {@link WineScraperThread}.
-   *
-   * @param barcode
-   *          The barcode of the wine we'll be scraping.
-   */
-  private void scrapeWinesAndEditWine(String barcode) {
-    AsyncTask<String, Void, List<Wine>> task = new WineScraperThread();
-    task.execute(barcode);
-  }
-
-  private class WineScraperThread extends AsyncTask<String, Void, List<Wine>> {
-
-    private ProgressDialog progress;
-    private String barcode;
-
-    @Override
-    protected void onPreExecute() {
-      super.onPreExecute();
-      progress = new ProgressDialog(WineDB.this);
-      progress.setMessage(getString(R.string.scraping));
-      progress.setIndeterminate(true);
-      progress.show();
-    }
-
-    @Override
-    protected List<Wine> doInBackground(String... params) {
-      barcode = params[0];
-      WineScrapers scrapers = new WineScrapers(barcode);
-      List<Wine> wines = scrapers.scrape();
-
-      return wines;
-    }
-
-    @Override
-    protected void onPostExecute(List<Wine> result) {
-      super.onPostExecute(result);
-      progress.dismiss();
-
-      Wine wine = null;
-      if (result.size() == 0) {
-        wine = new Wine();
-        wine.setBarcode(barcode);
-      }
-      // for now we'll just grab the first result, we can do something more sophisticated later
-      else {
-        wine = result.get(0);
-      }
-
-      startCreateNewWineIntent(wine);
-    }
-
-  }
-
-  public void startCreateNewWineIntent(Wine wine) {
-    Intent editIntent = new Intent(this, CreateOrEditWineActivity.class);
-    editIntent.putExtra("wine", wine);
-    startActivityForResult(editIntent, RequestCode.EDIT_WINE.ordinal());
-  }
-
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     MenuItem addItem = menu.add(R.string.add_wine);
     addItem.setIcon(android.R.drawable.ic_menu_add);
-
+  
     MenuItem sortItem = menu.add(R.string.sort_wines);
     sortItem.setIcon(android.R.drawable.ic_menu_sort_alphabetically);
-
+  
     MenuItem helpItem = menu.add(R.string.help);
     helpItem.setIcon(android.R.drawable.ic_menu_help);
-
+  
     return true;
   }
 
@@ -302,12 +223,77 @@ public class WineDB extends ListActivity {
       Intent intent = new Intent(this, CreateOrEditWineActivity.class);
       startActivityForResult(intent, RequestCode.EDIT_WINE.ordinal());
     }
-
+  
     return true;
+  }
+
+  public void startCreateNewWineIntent(Wine wine) {
+    Intent editIntent = new Intent(this, CreateOrEditWineActivity.class);
+    editIntent.putExtra("wine", wine);
+    startActivityForResult(editIntent, RequestCode.EDIT_WINE.ordinal());
+  }
+
+  @SuppressWarnings("deprecation")
+  private void refreshWines() {
+    cursor.requery();
+  }
+
+  /**
+   * Create an AsyncTask to go scrape wines for us. The real magic happens in
+   * {@link WineScraperThread}.
+   * 
+   * @param barcode
+   *          The barcode of the wine we'll be scraping.
+   */
+  private void scrapeWinesAndEditWine(String barcode) {
+    AsyncTask<String, Void, List<Wine>> task = new WineScraperThread();
+    task.execute(barcode);
   }
 
   private Wine getWine(int position) {
     Cursor cursor = (Cursor) adapter.getItem(position);
     return wineDatabase.cursorToWine(cursor);
+  }
+
+  private class WineScraperThread extends AsyncTask<String, Void, List<Wine>> {
+    private ProgressDialog progress;
+    private String barcode;
+  
+    @Override
+    protected void onPreExecute() {
+      super.onPreExecute();
+      progress = new ProgressDialog(WineDB.this);
+      progress.setMessage(getString(R.string.scraping));
+      progress.setIndeterminate(true);
+      progress.show();
+    }
+  
+    @Override
+    protected List<Wine> doInBackground(String... params) {
+      barcode = params[0];
+      WineScrapers scrapers = new WineScrapers(barcode);
+      List<Wine> wines = scrapers.scrape();
+  
+      return wines;
+    }
+  
+    @Override
+    protected void onPostExecute(List<Wine> result) {
+      super.onPostExecute(result);
+      progress.dismiss();
+  
+      Wine wine = null;
+      if (result.size() == 0) {
+        wine = new Wine();
+        wine.setBarcode(barcode);
+      }
+      // for now we'll just grab the first result, we can do something more sophisticated later
+      else {
+        wine = result.get(0);
+      }
+  
+      startCreateNewWineIntent(wine);
+    }
+  
   }
 }
