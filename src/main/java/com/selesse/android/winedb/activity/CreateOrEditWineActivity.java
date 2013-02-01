@@ -2,6 +2,7 @@ package com.selesse.android.winedb.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -12,6 +13,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.selesse.android.winedb.R;
+import com.selesse.android.winedb.contentprovider.WineContentProvider;
 import com.selesse.android.winedb.model.Wine;
 import com.selesse.android.winedb.model.Wine.WineColor;
 
@@ -23,22 +25,27 @@ public class CreateOrEditWineActivity extends Activity {
   Spinner spinner;
   boolean editMode = false;
 
+  private Uri wineUri;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     Bundle bundle = this.getIntent().getExtras();
 
-    // if the bundle isn't null, we know we're editing something
-    if (bundle != null) {
-      wine = (Wine) bundle.getSerializable("wine");
-      editMode = true;
-    }
-
     if (savedInstanceState != null) {
-      wine = (Wine) savedInstanceState.getSerializable("onsave_wine");
+      wineUri = (Uri) savedInstanceState.getParcelable(WineContentProvider.CONTENT_ITEM_TYPE);
+      wine = WineContentProvider.getWineFromUri(wineUri, getContentResolver());
     }
+    if (bundle != null) {
+      editMode = true;
+      wine = (Wine) bundle.getSerializable("wine");
+      wineUri = (Uri) bundle.getParcelable(WineContentProvider.CONTENT_ITEM_TYPE);
 
-    if (wine == null) {
-      wine = new Wine();
+      if (wineUri == null) {
+        wineUri = Uri.parse(WineContentProvider.CONTENT_URI + "/" + wine.getId());
+      }
+      if (wine == null) {
+        wine = WineContentProvider.getWineFromUri(wineUri, getContentResolver());
+      }
     }
 
     super.onCreate(savedInstanceState);
@@ -164,7 +171,7 @@ public class CreateOrEditWineActivity extends Activity {
   protected void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
 
-    outState.putSerializable("onsave_wine", wine);
+    outState.putParcelable(WineContentProvider.CONTENT_ITEM_TYPE, wineUri);
   }
 
 }

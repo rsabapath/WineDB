@@ -17,7 +17,7 @@ public class WineTable {
   public static final String COLUMN_COLOR = "color";
 
   private static final String DATABASE_CREATE = "create table " + TABLE_WINES + "(" + COLUMN_ID
-      + " integer primary key autoincrement, " + COLUMN_BARCODE + " text not null, " + COLUMN_NAME
+      + " integer primary key autoincrement, " + COLUMN_BARCODE + " text, " + COLUMN_NAME
       + " text, " + COLUMN_RATING + " integer, " + COLUMN_COMMENT + " text, " + COLUMN_COUNTRY
       + " text, " + COLUMN_DESCRIPTION + " text, " + COLUMN_IMAGE_URL + " text," + COLUMN_PRICE
       + " text," + COLUMN_YEAR + " integer, " + COLUMN_COLOR + " text);";

@@ -22,6 +22,12 @@
         android:label="@string/app_name" >
         <uses-library android:name="android.test.runner" />
 
+        <provider
+            android:name="com.selesse.android.winedb.contentprovider.WineContentProvider"
+            android:authorities="com.selesse.android.winedb.contentprovider.WineContentProvider"
+            android:exported="false" >
+        </provider>
+
         <activity
             android:name=".activity.WineDB"
             android:configChanges="orientation|keyboardHidden"

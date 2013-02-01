@@ -3,19 +3,25 @@ package com.selesse.android.winedb.activity;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.LoaderManager;
 import android.app.ProgressDialog;
+import android.content.ContentValues;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnCreateContextMenuListener;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -27,23 +33,25 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.selesse.android.winedb.R;
-import com.selesse.android.winedb.database.WineDatabase;
+import com.selesse.android.winedb.contentprovider.WineContentProvider;
 import com.selesse.android.winedb.database.sqlite.WineTable;
-import com.selesse.android.winedb.database.sqlite.WinesDataSource;
 import com.selesse.android.winedb.model.RequestCode;
 import com.selesse.android.winedb.model.Wine;
 import com.selesse.android.winedb.model.WineContextMenu;
 import com.selesse.android.winedb.winescraper.WineScrapers;
 
-public class WineDB extends SherlockListActivity {
+@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+public class WineDB extends SherlockListActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
-  private WineDatabase wineDatabase;
   private Cursor cursor;
   private SimpleCursorAdapter adapter;
+  private static final String[] PROJECTION = new String[] {
+      WineTable.COLUMN_ID,
+      WineTable.COLUMN_NAME,
+      WineTable.COLUMN_COLOR };
+  private static final int LOADER_ID = 0;
+  private LoaderManager.LoaderCallbacks<Cursor> callBacks;
 
-  // deprecated because we're using a deprecated SimpleCursorAdapter constructor for 2.3+
-  // compatibility
-  @SuppressWarnings("deprecation")
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -51,51 +59,19 @@ public class WineDB extends SherlockListActivity {
 
     final Activity activity = this;
 
-    // initialize the database - this particular implementation is an SQLite DB
-    wineDatabase = new WinesDataSource(this);
-    wineDatabase.open();
-
-    cursor = wineDatabase.getAllWines();
-    startManagingCursor(cursor);
-
     String[] from = { WineTable.COLUMN_NAME, WineTable.COLUMN_COLOR };
     int[] to = { R.id.name, R.id.wine_color };
 
-    adapter = new SimpleCursorAdapter(this, R.layout.rows, cursor, from, to);
+    adapter = new SimpleCursorAdapter(this, R.layout.rows, cursor, from, to, 0);
 
     setListAdapter(adapter);
 
-    ListView listView = getListView();
+    callBacks = this;
 
-    listView.setOnItemClickListener(new OnItemClickListener() {
-      @Override
-      public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        // get the wine at that position and pass it to the view single wine activity
-        Wine wine = getWine(position);
+    LoaderManager lm = getLoaderManager();
+    lm.initLoader(LOADER_ID, null, callBacks);
 
-        Intent intent = new Intent(activity, SingleWineView.class);
-        intent.putExtra("wine", wine);
-        startActivity(intent);
-      }
-    });
-
-    listView.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
-
-      @Override
-      public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-        // go through all the WineContextMenu enum, make them clickable items
-
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-
-        Wine wine = getWine(info.position);
-
-        menu.setHeaderTitle(wine.getName().substring(0, Math.min(wine.getName().length(), 22)));
-
-        for (WineContextMenu contextMenuItem : WineContextMenu.values()) {
-          menu.add(0, info.position, contextMenuItem.ordinal(), contextMenuItem.toString());
-        }
-      }
-    });
+    registerForContextMenu(getListView());
 
     // part responsible for launching zxing intent
     final Button scan = (Button) findViewById(R.id.scan);
@@ -108,6 +84,27 @@ public class WineDB extends SherlockListActivity {
       }
     });
 
+  }
+
+  @Override
+  protected void onListItemClick(ListView l, View v, int position, long id) {
+    super.onListItemClick(l, v, position, id);
+
+    Intent intent = new Intent(this, SingleWineView.class);
+    Uri wineUri = Uri.parse(WineContentProvider.CONTENT_URI + "/" + id);
+    intent.putExtra(WineContentProvider.CONTENT_ITEM_TYPE, wineUri);
+    startActivity(intent);
+  }
+
+  @Override
+  public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+    super.onCreateContextMenu(menu, v, menuInfo);
+
+    AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+
+    for (WineContextMenu contextMenuItem : WineContextMenu.values()) {
+      menu.add(0, info.position, contextMenuItem.ordinal(), contextMenuItem.toString());
+    }
   }
 
   @Override
@@ -138,28 +135,19 @@ public class WineDB extends SherlockListActivity {
   public boolean onContextItemSelected(MenuItem item) {
     super.onContextItemSelected(item);
 
-    AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item
-        .getMenuInfo();
-
-    int winePositionIndex = info.position;
-
     WineContextMenu selectedItem = WineContextMenu.values()[item.getOrder()];
+    AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 
     switch (selectedItem) {
       case DELETE:
-        Wine delete_wine = getWine(winePositionIndex);
-        Toast.makeText(
-            this,
-            "Deleted "
-                + delete_wine.getName().substring(0, Math.min(40, delete_wine.getName().length())),
-            Toast.LENGTH_SHORT).show();
-        wineDatabase.deleteWine(delete_wine);
-        refreshWines();
+        Uri uri = Uri.parse(WineContentProvider.CONTENT_URI + "/" + info.id);
+        getContentResolver().delete(uri, null, null);
         break;
       case EDIT:
-        Intent i = new Intent(this, CreateOrEditWineActivity.class);
-        i.putExtra("wine", getWine(winePositionIndex));
-        startActivityForResult(i, RequestCode.EDIT_WINE.ordinal());
+        Intent intent = new Intent(getBaseContext(), CreateOrEditWineActivity.class);
+        uri = Uri.parse(WineContentProvider.CONTENT_URI + "/" + info.id);
+        intent.putExtra(WineContentProvider.CONTENT_ITEM_TYPE, uri);
+        startActivityForResult(intent, RequestCode.EDIT_WINE.ordinal());
         break;
     }
 
@@ -206,18 +194,20 @@ public class WineDB extends SherlockListActivity {
       // this is a returned wine
       if (resultCode == RESULT_OK) {
         Bundle bundle = intent.getExtras();
-        wine = (Wine) bundle.get("wine");
+        wine = (Wine) bundle.getSerializable("wine");
+
+        ContentValues values = WineContentProvider.getContentValuesFromWine(wine);
 
         // if it doesn't yet have an id, give it one
         if (wine.getId() == 0) {
-          wine = wineDatabase.createWine(wine);
+          getContentResolver().insert(WineContentProvider.CONTENT_URI, values);
         }
         // otherwise just update the already-existing wine
         else {
-          wineDatabase.updateWine(wine);
+          getContentResolver().update(WineContentProvider.CONTENT_URI, values,
+              WineTable.COLUMN_ID + "=" + wine.getId(), null);
         }
       }
-      refreshWines();
     }
   }
 
@@ -225,11 +215,6 @@ public class WineDB extends SherlockListActivity {
     Intent editIntent = new Intent(this, CreateOrEditWineActivity.class);
     editIntent.putExtra("wine", wine);
     startActivityForResult(editIntent, RequestCode.EDIT_WINE.ordinal());
-  }
-
-  @SuppressWarnings("deprecation")
-  private void refreshWines() {
-    cursor.requery();
   }
 
   /**
@@ -242,11 +227,6 @@ public class WineDB extends SherlockListActivity {
   private void scrapeWinesAndEditWine(String barcode) {
     AsyncTask<String, Void, List<Wine>> task = new WineScraperThread();
     task.execute(barcode);
-  }
-
-  private Wine getWine(int position) {
-    Cursor cursor = (Cursor) adapter.getItem(position);
-    return wineDatabase.cursorToWine(cursor);
   }
 
   private class WineScraperThread extends AsyncTask<String, Void, List<Wine>> {
@@ -289,5 +269,25 @@ public class WineDB extends SherlockListActivity {
       startCreateNewWineIntent(wine);
     }
 
+  }
+
+  @Override
+  public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+    return new CursorLoader(WineDB.this, WineContentProvider.CONTENT_URI, PROJECTION, null, null,
+        null);
+  }
+
+  @Override
+  public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+    switch (loader.getId()) {
+      case LOADER_ID:
+        adapter.swapCursor(cursor);
+        break;
+    }
+  }
+
+  @Override
+  public void onLoaderReset(Loader<Cursor> arg0) {
+    adapter.swapCursor(null);
   }
 }
