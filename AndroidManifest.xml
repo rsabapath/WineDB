@@ -26,7 +26,7 @@
             android:name=".activity.WineDB"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name"
-            android:theme="@android:style/Theme.NoTitleBar" >
+            android:theme="@style/Theme.Sherlock" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

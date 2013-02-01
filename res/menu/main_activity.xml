@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/add_wine"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/add_wine"/>
+    <item
+        android:id="@+id/sortBy"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/sort_wines"/>
+
+</menu>
