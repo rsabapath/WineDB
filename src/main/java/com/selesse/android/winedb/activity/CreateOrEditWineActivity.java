@@ -12,14 +12,13 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.selesse.android.winedb.R;
+import com.selesse.android.winedb.database.Wine;
 import com.selesse.android.winedb.database.WineDatabaseHandler;
-import com.selesse.android.winedb.database.WineTable;
-import com.selesse.android.winedb.model.Wine;
 import com.selesse.android.winedb.model.WineColor;
 
 public class CreateOrEditWineActivity extends Activity {
 
-  WineTable wine = new WineTable();
+  Wine wine = new Wine();
   EditText barcodeText, nameText, countryText, yearText, descText, ratingText, priceText,
       commentText, imageText;
   Spinner spinner;
@@ -30,13 +29,17 @@ public class CreateOrEditWineActivity extends Activity {
     Bundle bundle = this.getIntent().getExtras();
 
     if (savedInstanceState != null) {
-      wine.id = savedInstanceState.getLong("id");
+      wine.setId(savedInstanceState.getLong("id"));
     }
     if (bundle != null) {
       editMode = true;
-      wine.id = bundle.getLong("id");
-
-      wine = WineDatabaseHandler.getInstance(this).getWine(wine.id);
+      wine.setId(bundle.getLong("id"));
+      if (wine.getId() <= 0) {
+        wine = (Wine) bundle.getSerializable("wine");
+      }
+      else {
+        wine = WineDatabaseHandler.getInstance(this).getWine(wine.getId());
+      }
     }
 
     super.onCreate(savedInstanceState);
@@ -149,6 +152,7 @@ public class CreateOrEditWineActivity extends Activity {
           wine.setColor(WineColor.values()[spinner.getSelectedItemPosition()]);
         }
 
+        WineDatabaseHandler.getInstance(getApplicationContext()).putWine(wine);
         Intent data = new Intent();
         data.putExtra("id", wine.getId());
         setResult(RESULT_OK, data);
@@ -162,7 +166,7 @@ public class CreateOrEditWineActivity extends Activity {
   protected void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
 
-    outState.putLong("id", wine.id);
+    outState.putLong("id", wine.getId());
   }
 
 }

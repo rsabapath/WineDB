@@ -18,13 +18,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.selesse.android.winedb.R;
+import com.selesse.android.winedb.database.Wine;
 import com.selesse.android.winedb.database.WineDatabaseHandler;
-import com.selesse.android.winedb.database.WineTable;
 import com.selesse.android.winedb.model.RequestCode;
 import com.selesse.android.winedb.model.WineColor;
 
 public class SingleWineView extends Activity {
-  WineTable wine = new WineTable();
+  Wine wine = new Wine();
   TextView nameText = null;
   TextView countryText = null;
   TextView yearText = null;
@@ -40,13 +40,13 @@ public class SingleWineView extends Activity {
     Bundle extras = this.getIntent().getExtras();
 
     if (savedInstanceState != null) {
-      wine.id = (Long) savedInstanceState.get("id");
+      wine.setId((Long) savedInstanceState.get("id"));
     }
     if (extras != null) {
-      wine.id = extras.getLong("id");
+      wine.setId(extras.getLong("id"));
     }
-    if (wine.id > 0) {
-      wine = WineDatabaseHandler.getInstance(this).getWine(wine.id);
+    if (wine.getId() >= 0) {
+      wine = WineDatabaseHandler.getInstance(this).getWine(wine.getId());
     }
 
     super.onCreate(savedInstanceState);
@@ -62,21 +62,21 @@ public class SingleWineView extends Activity {
     commentText = (TextView) findViewById(R.id.commentText);
     image = (ImageView) findViewById(R.id.image);
     Button editButton = (Button) findViewById(R.id.editWine);
-
+    
+    updateView(wine);
+    
     editButton.setOnClickListener(new View.OnClickListener() {
 
       @Override
       public void onClick(View v) {
         Intent intent = new Intent(getBaseContext(), CreateOrEditWineActivity.class);
-        intent.putExtra("id", wine.id);
+        intent.putExtra("id", wine.getId());
         startActivityForResult(intent, RequestCode.EDIT_WINE.ordinal());
       }
     });
-
-    updateView(wine);
   }
 
-  private void updateView(WineTable wine) {
+  private void updateView(Wine wine) {
 
     if (!wine.getName().equals("")) {
       nameText.setText(wine.getName());
@@ -126,8 +126,7 @@ public class SingleWineView extends Activity {
     super.onActivityResult(requestCode, resultCode, data);
 
     if (requestCode == RequestCode.EDIT_WINE.ordinal() && resultCode == Activity.RESULT_OK) {
-      // FIXME
-      
+      wine = WineDatabaseHandler.getInstance(this).getWine(wine.getId());
       updateView(wine);
     }
   }

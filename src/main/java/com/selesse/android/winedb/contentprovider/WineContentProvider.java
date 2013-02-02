@@ -9,8 +9,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.text.TextUtils;
 
+import com.selesse.android.winedb.database.Wine;
 import com.selesse.android.winedb.database.WineDatabaseHandler;
-import com.selesse.android.winedb.database.WineTable;
 
 public class WineContentProvider extends ContentProvider {
 
@@ -36,15 +36,15 @@ public class WineContentProvider extends ContentProvider {
     int rowsDeleted = 0;
     switch (uriType) {
       case WINES:
-        rowsDeleted = sqlDB.delete(WineTable.TABLE_WINES, selection, selectionArgs);
+        rowsDeleted = sqlDB.delete(Wine.TABLE_WINES, selection, selectionArgs);
         break;
       case WINE_ID:
         String id = uri.getLastPathSegment();
         if (TextUtils.isEmpty(selection)) {
-          rowsDeleted = sqlDB.delete(WineTable.TABLE_WINES, WineTable.COLUMN_ID + "=" + id, null);
+          rowsDeleted = sqlDB.delete(Wine.TABLE_WINES, Wine.COLUMN_ID + "=" + id, null);
         }
         else {
-          rowsDeleted = sqlDB.delete(WineTable.TABLE_WINES, WineTable.COLUMN_ID + "=" + id
+          rowsDeleted = sqlDB.delete(Wine.TABLE_WINES, Wine.COLUMN_ID + "=" + id
               + " and " + selection, selectionArgs);
         }
         break;
@@ -68,7 +68,7 @@ public class WineContentProvider extends ContentProvider {
     long id = 0;
     switch (uriType) {
       case WINES:
-        id = sqlDB.insert(WineTable.TABLE_WINES, null, values);
+        id = sqlDB.insert(Wine.TABLE_WINES, null, values);
         break;
       default:
         throw new IllegalArgumentException("Unknown URI: " + uri);
@@ -89,7 +89,7 @@ public class WineContentProvider extends ContentProvider {
     Cursor result = null;
     if (CONTENT_URI.equals(uri)) {
       result = WineDatabaseHandler.getInstance(getContext()).getReadableDatabase()
-          .query(WineTable.TABLE_WINES, WineTable.FIELDS, null, null, null, null, null, null);
+          .query(Wine.TABLE_WINES, Wine.FIELDS, null, null, null, null, null, null);
       result.setNotificationUri(getContext().getContentResolver(), CONTENT_URI);
     }
     else if (uri.toString().startsWith(CONTENT_ITEM_TYPE)) {
@@ -97,7 +97,7 @@ public class WineContentProvider extends ContentProvider {
       result = WineDatabaseHandler
           .getInstance(getContext())
           .getReadableDatabase()
-          .query(WineTable.TABLE_WINES, WineTable.FIELDS, WineTable.COLUMN_ID + " IS ?",
+          .query(Wine.TABLE_WINES, Wine.FIELDS, Wine.COLUMN_ID + " IS ?",
               new String[] { String.valueOf(id) }, null, null, null, null);
       result.setNotificationUri(getContext().getContentResolver(), CONTENT_URI);
     }
@@ -115,16 +115,16 @@ public class WineContentProvider extends ContentProvider {
     int rowsUpdated = 0;
     switch (uriType) {
       case WINES:
-        rowsUpdated = sqlDB.update(WineTable.TABLE_WINES, values, selection, selectionArgs);
+        rowsUpdated = sqlDB.update(Wine.TABLE_WINES, values, selection, selectionArgs);
         break;
       case WINE_ID:
         String id = uri.getLastPathSegment();
         if (TextUtils.isEmpty(selection)) {
-          rowsUpdated = sqlDB.update(WineTable.TABLE_WINES, values, WineTable.COLUMN_ID + "=" + id,
+          rowsUpdated = sqlDB.update(Wine.TABLE_WINES, values, Wine.COLUMN_ID + "=" + id,
               null);
         }
         else {
-          rowsUpdated = sqlDB.update(WineTable.TABLE_WINES, values, WineTable.COLUMN_ID + "=" + id
+          rowsUpdated = sqlDB.update(Wine.TABLE_WINES, values, Wine.COLUMN_ID + "=" + id
               + " and " + selection, selectionArgs);
         }
         break;

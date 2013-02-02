@@ -29,39 +29,39 @@ public class WineDatabaseHandler extends SQLiteOpenHelper {
 
   @Override
   public void onCreate(SQLiteDatabase db) {
-    WineTable.onCreate(db);
+    Wine.onCreate(db);
   }
 
   @Override
   public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-    WineTable.onUpgrade(db, oldVersion, newVersion);
+    Wine.onUpgrade(db, oldVersion, newVersion);
   }
 
-  public synchronized WineTable getWine(final long id) {
+  public synchronized Wine getWine(final long id) {
     final SQLiteDatabase db = this.getReadableDatabase();
-    final Cursor cursor = db.query(WineTable.TABLE_WINES, WineTable.FIELDS, WineTable.COLUMN_ID
+    final Cursor cursor = db.query(Wine.TABLE_WINES, Wine.FIELDS, Wine.COLUMN_ID
         + " IS ?", new String[] { String.valueOf(id) }, null, null, null, null);
     if (cursor == null || cursor.isAfterLast()) {
       return null;
     }
 
-    WineTable item = null;
+    Wine item = null;
     if (cursor.moveToFirst()) {
-      item = new WineTable(cursor);
+      item = new Wine(cursor);
     }
     cursor.close();
 
     return item;
   }
 
-  public synchronized boolean putWineTable(final WineTable wine) {
+  public synchronized boolean putWine(final Wine wine) {
     boolean success = false;
     int result = 0;
     final SQLiteDatabase db = this.getWritableDatabase();
 
-    if (wine.id > -1) {
-      result += db.update(WineTable.TABLE_WINES, wine.getContent(), WineTable.COLUMN_ID + " IS ?",
-          new String[] { String.valueOf(wine.id) });
+    if (wine.getId() > -1) {
+      result += db.update(Wine.TABLE_WINES, wine.getContent(), Wine.COLUMN_ID + " IS ?",
+          new String[] { String.valueOf(wine.getId()) });
     }
 
     if (result > 0) {
@@ -69,10 +69,10 @@ public class WineDatabaseHandler extends SQLiteOpenHelper {
     }
     else {
       // Update failed or wasn't possible, insert instead
-      final long id = db.insert(WineTable.TABLE_WINES, null, wine.getContent());
+      final long id = db.insert(Wine.TABLE_WINES, null, wine.getContent());
 
       if (id > -1) {
-        wine.id = id;
+        wine.setId(id);
         success = true;
       }
     }
@@ -84,10 +84,10 @@ public class WineDatabaseHandler extends SQLiteOpenHelper {
     return success;
   }
 
-  public synchronized int removeWine(final WineTable wine) {
+  public synchronized int removeWine(final Wine wine) {
     final SQLiteDatabase db = this.getWritableDatabase();
-    final int result = db.delete(WineTable.TABLE_WINES, WineTable.COLUMN_ID + " IS ?",
-        new String[] { Long.toString(wine.id) });
+    final int result = db.delete(Wine.TABLE_WINES, Wine.COLUMN_ID + " IS ?",
+        new String[] { Long.toString(wine.getId()) });
 
     if (result > 0) {
       notifyProviderOnPersonChange();

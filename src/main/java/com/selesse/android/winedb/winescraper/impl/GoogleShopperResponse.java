@@ -3,7 +3,7 @@ package com.selesse.android.winedb.winescraper.impl;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.selesse.android.winedb.model.Wine;
+import com.selesse.android.winedb.database.Wine;
 import com.selesse.android.winedb.winescraper.AbstractWineResponse;
 import com.selesse.android.winedb.winescraper.WineResponse;
 

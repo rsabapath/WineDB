@@ -2,7 +2,7 @@ package com.selesse.android.winedb.winescraper;
 
 import java.util.List;
 
-import com.selesse.android.winedb.model.Wine;
+import com.selesse.android.winedb.database.Wine;
 
 /**
  * Interface for a single Wine Scraper. Every class implementing this interface should fetch wine

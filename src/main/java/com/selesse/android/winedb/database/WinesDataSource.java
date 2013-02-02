@@ -9,24 +9,23 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.selesse.android.winedb.model.Wine;
 import com.selesse.android.winedb.model.WineColor;
 
 public class WinesDataSource {
   private SQLiteDatabase db;
   private WineDatabaseHandler dbHelper;
   private String[] allColumns = {
-      WineTable.COLUMN_ID,
-      WineTable.COLUMN_BARCODE,
-      WineTable.COLUMN_NAME,
-      WineTable.COLUMN_RATING,
-      WineTable.COLUMN_COMMENT,
-      WineTable.COLUMN_COUNTRY,
-      WineTable.COLUMN_DESCRIPTION,
-      WineTable.COLUMN_IMAGE_URL,
-      WineTable.COLUMN_PRICE,
-      WineTable.COLUMN_YEAR,
-      WineTable.COLUMN_COLOR };
+      Wine.COLUMN_ID,
+      Wine.COLUMN_BARCODE,
+      Wine.COLUMN_NAME,
+      Wine.COLUMN_RATING,
+      Wine.COLUMN_COMMENT,
+      Wine.COLUMN_COUNTRY,
+      Wine.COLUMN_DESCRIPTION,
+      Wine.COLUMN_IMAGE_URL,
+      Wine.COLUMN_PRICE,
+      Wine.COLUMN_YEAR,
+      Wine.COLUMN_COLOR };
 
   public WinesDataSource(Context context) {
     dbHelper = new WineDatabaseHandler(context);
@@ -48,20 +47,20 @@ public class WinesDataSource {
   public Wine createWine(Wine wine) {
     ContentValues values = new ContentValues();
 
-    values.put(WineTable.COLUMN_BARCODE, wine.getBarcode());
-    values.put(WineTable.COLUMN_NAME, wine.getName());
-    values.put(WineTable.COLUMN_RATING, wine.getRating());
-    values.put(WineTable.COLUMN_COMMENT, wine.getComment());
-    values.put(WineTable.COLUMN_COUNTRY, wine.getCountry());
-    values.put(WineTable.COLUMN_DESCRIPTION, wine.getDescription());
-    values.put(WineTable.COLUMN_IMAGE_URL, wine.getImageURL());
-    values.put(WineTable.COLUMN_PRICE, wine.getPrice());
-    values.put(WineTable.COLUMN_YEAR, wine.getYear());
-    values.put(WineTable.COLUMN_COLOR, wine.getColor().toString());
+    values.put(Wine.COLUMN_BARCODE, wine.getBarcode());
+    values.put(Wine.COLUMN_NAME, wine.getName());
+    values.put(Wine.COLUMN_RATING, wine.getRating());
+    values.put(Wine.COLUMN_COMMENT, wine.getComment());
+    values.put(Wine.COLUMN_COUNTRY, wine.getCountry());
+    values.put(Wine.COLUMN_DESCRIPTION, wine.getDescription());
+    values.put(Wine.COLUMN_IMAGE_URL, wine.getImageURL());
+    values.put(Wine.COLUMN_PRICE, wine.getPrice());
+    values.put(Wine.COLUMN_YEAR, wine.getYear());
+    values.put(Wine.COLUMN_COLOR, wine.getColor().toString());
 
-    long insertId = db.insert(WineTable.TABLE_WINES, null, values);
+    long insertId = db.insert(Wine.TABLE_WINES, null, values);
 
-    Cursor cursor = db.query(WineTable.TABLE_WINES, allColumns, WineTable.COLUMN_ID + " = "
+    Cursor cursor = db.query(Wine.TABLE_WINES, allColumns, Wine.COLUMN_ID + " = "
         + insertId, null, null, null, null);
     cursor.moveToFirst();
     Wine newWine = cursorToWine(cursor);
@@ -72,7 +71,7 @@ public class WinesDataSource {
 
   public void deleteWine(Wine wine) {
     long id = wine.getId();
-    db.delete(WineTable.TABLE_WINES, WineTable.COLUMN_ID + " = " + id, null);
+    db.delete(Wine.TABLE_WINES, Wine.COLUMN_ID + " = " + id, null);
   }
 
   public Wine cursorToWine(Cursor cursor) {
@@ -101,23 +100,23 @@ public class WinesDataSource {
   public void updateWine(Wine wine) {
     ContentValues values = new ContentValues();
 
-    values.put(WineTable.COLUMN_BARCODE, wine.getBarcode());
-    values.put(WineTable.COLUMN_NAME, wine.getName());
-    values.put(WineTable.COLUMN_RATING, wine.getRating());
-    values.put(WineTable.COLUMN_COMMENT, wine.getComment());
-    values.put(WineTable.COLUMN_COUNTRY, wine.getCountry());
-    values.put(WineTable.COLUMN_DESCRIPTION, wine.getDescription());
-    values.put(WineTable.COLUMN_IMAGE_URL, wine.getImageURL());
-    values.put(WineTable.COLUMN_PRICE, wine.getPrice());
-    values.put(WineTable.COLUMN_YEAR, wine.getYear());
-    values.put(WineTable.COLUMN_COLOR, wine.getColor().toString());
+    values.put(Wine.COLUMN_BARCODE, wine.getBarcode());
+    values.put(Wine.COLUMN_NAME, wine.getName());
+    values.put(Wine.COLUMN_RATING, wine.getRating());
+    values.put(Wine.COLUMN_COMMENT, wine.getComment());
+    values.put(Wine.COLUMN_COUNTRY, wine.getCountry());
+    values.put(Wine.COLUMN_DESCRIPTION, wine.getDescription());
+    values.put(Wine.COLUMN_IMAGE_URL, wine.getImageURL());
+    values.put(Wine.COLUMN_PRICE, wine.getPrice());
+    values.put(Wine.COLUMN_YEAR, wine.getYear());
+    values.put(Wine.COLUMN_COLOR, wine.getColor().toString());
 
-    db.update(WineTable.TABLE_WINES, values, WineTable.COLUMN_ID + " = " + wine.getId(), null);
+    db.update(Wine.TABLE_WINES, values, Wine.COLUMN_ID + " = " + wine.getId(), null);
 
   }
 
   public Cursor getAllWines() {
-    Cursor cursor = db.query(WineTable.TABLE_WINES, allColumns, null, null, null, null, null);
+    Cursor cursor = db.query(Wine.TABLE_WINES, allColumns, null, null, null, null, null);
 
     return cursor;
   }

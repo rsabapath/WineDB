@@ -11,7 +11,7 @@ import java.util.List;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
-import com.selesse.android.winedb.model.Wine;
+import com.selesse.android.winedb.database.Wine;
 import com.selesse.android.winedb.priv.GoogleShopperKey;
 import com.selesse.android.winedb.winescraper.WineScraper;
 

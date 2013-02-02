@@ -1,5 +1,6 @@
 package com.selesse.android.winedb.database;
 
+import java.io.Serializable;
 import java.util.Locale;
 
 import android.content.ContentValues;
@@ -8,7 +9,8 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.selesse.android.winedb.model.WineColor;
 
-public class WineTable {
+public class Wine implements Serializable {
+  private static final long serialVersionUID = 6500980482273835304L;
   public static final String TABLE_WINES = "wines";
   public static final String COLUMN_ID = "_id";
   public static final String COLUMN_BARCODE = "barcode";
@@ -41,26 +43,26 @@ public class WineTable {
       + " text, " + COLUMN_DESCRIPTION + " text, " + COLUMN_IMAGE_URL + " text," + COLUMN_PRICE
       + " text," + COLUMN_YEAR + " integer, " + COLUMN_COLOR + " text);";
 
-  public long id = -1;
-  public String barcode = "";
-  public String name = "";
-  public int rating = -1;
-  public String comment = "";
-  public String country = "";
-  public String description = "";
-  public String imageURL = "";
-  public String price = "";
-  public int year = -1;
-  public WineColor color = WineColor.UNKNOWN;
+  private long id = -1;
+  private String barcode = "";
+  private String name = "";
+  private int rating = -1;
+  private String comment = "";
+  private String country = "";
+  private String description = "";
+  private String imageURL = "";
+  private String price = "";
+  private int year = -1;
+  private WineColor color = WineColor.UNKNOWN;
 
   /*
    * No need to do anything, fields already have their default values.
    */
-  public WineTable() {
+  public Wine() {
 
   }
 
-  public WineTable(final Cursor cursor) {
+  public Wine(final Cursor cursor) {
     this.id = cursor.getLong(0);
     this.barcode = cursor.getString(1);
     this.name = cursor.getString(2);
@@ -82,16 +84,16 @@ public class WineTable {
 
   public ContentValues getContent() {
     final ContentValues values = new ContentValues();
-    values.put(WineTable.COLUMN_BARCODE, barcode);
-    values.put(WineTable.COLUMN_NAME, name);
-    values.put(WineTable.COLUMN_RATING, rating);
-    values.put(WineTable.COLUMN_COMMENT, comment);
-    values.put(WineTable.COLUMN_COUNTRY, country);
-    values.put(WineTable.COLUMN_DESCRIPTION, description);
-    values.put(WineTable.COLUMN_IMAGE_URL, imageURL);
-    values.put(WineTable.COLUMN_PRICE, price);
-    values.put(WineTable.COLUMN_YEAR, year);
-    values.put(WineTable.COLUMN_COLOR, color.toString());
+    values.put(Wine.COLUMN_BARCODE, barcode);
+    values.put(Wine.COLUMN_NAME, name);
+    values.put(Wine.COLUMN_RATING, rating);
+    values.put(Wine.COLUMN_COMMENT, comment);
+    values.put(Wine.COLUMN_COUNTRY, country);
+    values.put(Wine.COLUMN_DESCRIPTION, description);
+    values.put(Wine.COLUMN_IMAGE_URL, imageURL);
+    values.put(Wine.COLUMN_PRICE, price);
+    values.put(Wine.COLUMN_YEAR, year);
+    values.put(Wine.COLUMN_COLOR, color.toString());
     return values;
   }
 

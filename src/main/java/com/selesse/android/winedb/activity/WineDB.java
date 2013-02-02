@@ -33,9 +33,9 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.selesse.android.winedb.R;
 import com.selesse.android.winedb.contentprovider.WineContentProvider;
-import com.selesse.android.winedb.database.WineTable;
+import com.selesse.android.winedb.database.Wine;
+import com.selesse.android.winedb.database.WineDatabaseHandler;
 import com.selesse.android.winedb.model.RequestCode;
-import com.selesse.android.winedb.model.Wine;
 import com.selesse.android.winedb.model.WineContextMenu;
 import com.selesse.android.winedb.winescraper.WineScrapers;
 
@@ -45,9 +45,9 @@ public class WineDB extends SherlockListActivity implements LoaderManager.Loader
   private Cursor cursor;
   private SimpleCursorAdapter adapter;
   private static final String[] PROJECTION = new String[] {
-      WineTable.COLUMN_ID,
-      WineTable.COLUMN_NAME,
-      WineTable.COLUMN_COLOR };
+      Wine.COLUMN_ID,
+      Wine.COLUMN_NAME,
+      Wine.COLUMN_COLOR };
   private static final int LOADER_ID = 0;
   private LoaderManager.LoaderCallbacks<Cursor> callBacks;
 
@@ -58,7 +58,7 @@ public class WineDB extends SherlockListActivity implements LoaderManager.Loader
 
     final Activity activity = this;
 
-    String[] from = { WineTable.COLUMN_NAME, WineTable.COLUMN_COLOR };
+    String[] from = { Wine.COLUMN_NAME, Wine.COLUMN_COLOR };
     int[] to = { R.id.name, R.id.wine_color };
 
     adapter = new SimpleCursorAdapter(this, R.layout.rows, cursor, from, to, 0);
@@ -143,9 +143,8 @@ public class WineDB extends SherlockListActivity implements LoaderManager.Loader
         break;
       case EDIT:
         Intent intent = new Intent(getBaseContext(), CreateOrEditWineActivity.class);
-        uri = Uri.parse(WineContentProvider.CONTENT_URI + "/" + info.id);
-        intent.putExtra(WineContentProvider.CONTENT_ITEM_TYPE, uri);
-        startActivityForResult(intent, RequestCode.EDIT_WINE.ordinal());
+        intent.putExtra("id", info.id);
+        startActivity(intent);
         break;
     }
 
@@ -179,26 +178,15 @@ public class WineDB extends SherlockListActivity implements LoaderManager.Loader
         wine.setBarcode(barcode);
         startCreateNewWineIntent(wine);
       }
-
-      return;
-    }
-
-    // this is a request code made for the winedb application, figure out which one
-    RequestCode requestCode = RequestCode.values()[requestCodeNumber];
-
-    if (requestCode == RequestCode.EDIT_WINE) {
-      Wine wine = null;
-
-      // this is a returned wine
-      if (resultCode == RESULT_OK) {
-        // FIXME
-      }
     }
   }
 
   public void startCreateNewWineIntent(Wine wine) {
     Intent editIntent = new Intent(this, CreateOrEditWineActivity.class);
-    editIntent.putExtra("wine", wine);
+    Bundle extras = new Bundle();
+    extras.putLong("id", wine.getId());
+    extras.putSerializable("wine", wine);
+    editIntent.putExtras(extras);
     startActivityForResult(editIntent, RequestCode.EDIT_WINE.ordinal());
   }
 

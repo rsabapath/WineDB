@@ -14,7 +14,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import com.google.common.collect.Lists;
-import com.selesse.android.winedb.model.Wine;
+import com.selesse.android.winedb.database.Wine;
 import com.selesse.android.winedb.winescraper.WineScraper;
 
 public class UPCDatabaseWineScraper implements WineScraper {

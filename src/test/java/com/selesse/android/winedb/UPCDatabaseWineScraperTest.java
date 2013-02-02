@@ -4,7 +4,7 @@ import java.util.List;
 
 import android.test.AndroidTestCase;
 
-import com.selesse.android.winedb.model.Wine;
+import com.selesse.android.winedb.database.Wine;
 import com.selesse.android.winedb.winescraper.impl.UPCDatabaseWineScraper;
 
 public class UPCDatabaseWineScraperTest extends AndroidTestCase {
