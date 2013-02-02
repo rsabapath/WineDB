@@ -1,4 +1,4 @@
-package com.selesse.android.winedb.database.sqlite;
+package com.selesse.android.winedb.database;
 
 import java.util.Locale;
 
@@ -9,13 +9,12 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.selesse.android.winedb.database.WineDatabase;
 import com.selesse.android.winedb.model.Wine;
-import com.selesse.android.winedb.model.Wine.WineColor;
+import com.selesse.android.winedb.model.WineColor;
 
-public class WinesDataSource implements WineDatabase {
+public class WinesDataSource {
   private SQLiteDatabase db;
-  private WineDatabaseHelper dbHelper;
+  private WineDatabaseHandler dbHelper;
   private String[] allColumns = {
       WineTable.COLUMN_ID,
       WineTable.COLUMN_BARCODE,
@@ -30,10 +29,9 @@ public class WinesDataSource implements WineDatabase {
       WineTable.COLUMN_COLOR };
 
   public WinesDataSource(Context context) {
-    dbHelper = new WineDatabaseHelper(context);
+    dbHelper = new WineDatabaseHandler(context);
   }
 
-  @Override
   public void open() {
     try {
       db = dbHelper.getWritableDatabase();
@@ -43,12 +41,10 @@ public class WinesDataSource implements WineDatabase {
     }
   }
 
-  @Override
   public void close() {
     dbHelper.close();
   }
 
-  @Override
   public Wine createWine(Wine wine) {
     ContentValues values = new ContentValues();
 
@@ -74,13 +70,11 @@ public class WinesDataSource implements WineDatabase {
     return newWine;
   }
 
-  @Override
   public void deleteWine(Wine wine) {
     long id = wine.getId();
     db.delete(WineTable.TABLE_WINES, WineTable.COLUMN_ID + " = " + id, null);
   }
 
-  @Override
   public Wine cursorToWine(Cursor cursor) {
     Wine wine = new Wine();
 
@@ -104,7 +98,6 @@ public class WinesDataSource implements WineDatabase {
     return wine;
   }
 
-  @Override
   public void updateWine(Wine wine) {
     ContentValues values = new ContentValues();
 
@@ -123,7 +116,6 @@ public class WinesDataSource implements WineDatabase {
 
   }
 
-  @Override
   public Cursor getAllWines() {
     Cursor cursor = db.query(WineTable.TABLE_WINES, allColumns, null, null, null, null, null);
 

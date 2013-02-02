@@ -1,25 +1,20 @@
 package com.selesse.android.winedb.contentprovider;
 
-import java.util.Locale;
-
 import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
 
-import com.selesse.android.winedb.database.sqlite.WineDatabaseHelper;
-import com.selesse.android.winedb.database.sqlite.WineTable;
-import com.selesse.android.winedb.model.Wine;
-import com.selesse.android.winedb.model.Wine.WineColor;
+import com.selesse.android.winedb.database.WineDatabaseHandler;
+import com.selesse.android.winedb.database.WineTable;
 
 public class WineContentProvider extends ContentProvider {
 
-  private WineDatabaseHelper db;
+  private WineDatabaseHandler db;
   private static final String AUTHORITY = "com.selesse.android.winedb.contentprovider.WineContentProvider";
   public static final int WINES = 100;
   public static final int WINE_ID = 110;
@@ -84,30 +79,33 @@ public class WineContentProvider extends ContentProvider {
 
   @Override
   public boolean onCreate() {
-    db = new WineDatabaseHelper(getContext());
+    db = new WineDatabaseHandler(getContext());
     return true;
   }
 
   @Override
   public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
       String sortOrder) {
-    SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-    queryBuilder.setTables(WineTable.TABLE_WINES);
-    int uriType = sURIMatcher.match(uri);
-    switch (uriType) {
-      case WINE_ID:
-        queryBuilder.appendWhere(WineTable.COLUMN_ID + "=" + uri.getLastPathSegment());
-        break;
-      case WINES:
-        // no filter
-        break;
-      default:
-        throw new IllegalArgumentException("Unknown URI");
+    Cursor result = null;
+    if (CONTENT_URI.equals(uri)) {
+      result = WineDatabaseHandler.getInstance(getContext()).getReadableDatabase()
+          .query(WineTable.TABLE_WINES, WineTable.FIELDS, null, null, null, null, null, null);
+      result.setNotificationUri(getContext().getContentResolver(), CONTENT_URI);
     }
-    Cursor cursor = queryBuilder.query(db.getReadableDatabase(), projection, selection,
-        selectionArgs, null, null, sortOrder);
-    cursor.setNotificationUri(getContext().getContentResolver(), uri);
-    return cursor;
+    else if (uri.toString().startsWith(CONTENT_ITEM_TYPE)) {
+      final long id = Long.parseLong(uri.getLastPathSegment());
+      result = WineDatabaseHandler
+          .getInstance(getContext())
+          .getReadableDatabase()
+          .query(WineTable.TABLE_WINES, WineTable.FIELDS, WineTable.COLUMN_ID + " IS ?",
+              new String[] { String.valueOf(id) }, null, null, null, null);
+      result.setNotificationUri(getContext().getContentResolver(), CONTENT_URI);
+    }
+    else {
+      throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    return result;
   }
 
   @Override
@@ -135,65 +133,6 @@ public class WineContentProvider extends ContentProvider {
     }
     getContext().getContentResolver().notifyChange(uri, null);
     return rowsUpdated;
-  }
-
-  public static Wine getWineFromUri(Uri wineUri, ContentResolver resolver) {
-    String[] projection = {
-        WineTable.COLUMN_ID,
-        WineTable.COLUMN_BARCODE,
-        WineTable.COLUMN_NAME,
-        WineTable.COLUMN_RATING,
-        WineTable.COLUMN_COMMENT,
-        WineTable.COLUMN_COUNTRY,
-        WineTable.COLUMN_DESCRIPTION,
-        WineTable.COLUMN_IMAGE_URL,
-        WineTable.COLUMN_PRICE,
-        WineTable.COLUMN_YEAR,
-        WineTable.COLUMN_COLOR };
-    Wine wine = new Wine();
-
-    Cursor cursor = resolver.query(wineUri, projection, null, null, null);
-    if (cursor != null) {
-      cursor.moveToFirst();
-      wine.setId(cursor.getLong(0));
-      wine.setBarcode(cursor.getString(1));
-      wine.setName(cursor.getString(2));
-      wine.setRating(cursor.getInt(3));
-      wine.setComment(cursor.getString(4));
-      wine.setCountry(cursor.getString(5));
-      wine.setDescription(cursor.getString(6));
-      wine.setImageURL(cursor.getString(7));
-      wine.setPrice(cursor.getString(8));
-      wine.setYear(cursor.getInt(9));
-      try {
-        wine.setColor(WineColor.valueOf(cursor.getString(10).toUpperCase(Locale.getDefault())));
-      }
-      catch (IllegalArgumentException e) {
-        wine.setColor(WineColor.UNKNOWN);
-      }
-
-      // Always close the cursor
-      cursor.close();
-    }
-
-    return wine;
-  }
-
-  public static ContentValues getContentValuesFromWine(Wine wine) {
-    ContentValues values = new ContentValues();
-
-    values.put(WineTable.COLUMN_BARCODE, wine.getBarcode());
-    values.put(WineTable.COLUMN_NAME, wine.getName());
-    values.put(WineTable.COLUMN_RATING, wine.getRating());
-    values.put(WineTable.COLUMN_COMMENT, wine.getComment());
-    values.put(WineTable.COLUMN_COUNTRY, wine.getCountry());
-    values.put(WineTable.COLUMN_DESCRIPTION, wine.getDescription());
-    values.put(WineTable.COLUMN_IMAGE_URL, wine.getImageURL());
-    values.put(WineTable.COLUMN_PRICE, wine.getPrice());
-    values.put(WineTable.COLUMN_YEAR, wine.getYear());
-    values.put(WineTable.COLUMN_COLOR, wine.getColor().toString());
-
-    return values;
   }
 
 }

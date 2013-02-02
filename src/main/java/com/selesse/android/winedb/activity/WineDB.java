@@ -7,7 +7,6 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.LoaderManager;
 import android.app.ProgressDialog;
-import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
@@ -34,7 +33,7 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.selesse.android.winedb.R;
 import com.selesse.android.winedb.contentprovider.WineContentProvider;
-import com.selesse.android.winedb.database.sqlite.WineTable;
+import com.selesse.android.winedb.database.WineTable;
 import com.selesse.android.winedb.model.RequestCode;
 import com.selesse.android.winedb.model.Wine;
 import com.selesse.android.winedb.model.WineContextMenu;
@@ -91,8 +90,7 @@ public class WineDB extends SherlockListActivity implements LoaderManager.Loader
     super.onListItemClick(l, v, position, id);
 
     Intent intent = new Intent(this, SingleWineView.class);
-    Uri wineUri = Uri.parse(WineContentProvider.CONTENT_URI + "/" + id);
-    intent.putExtra(WineContentProvider.CONTENT_ITEM_TYPE, wineUri);
+    intent.putExtra("id", id);
     startActivity(intent);
   }
 
@@ -193,20 +191,7 @@ public class WineDB extends SherlockListActivity implements LoaderManager.Loader
 
       // this is a returned wine
       if (resultCode == RESULT_OK) {
-        Bundle bundle = intent.getExtras();
-        wine = (Wine) bundle.getSerializable("wine");
-
-        ContentValues values = WineContentProvider.getContentValuesFromWine(wine);
-
-        // if it doesn't yet have an id, give it one
-        if (wine.getId() == 0) {
-          getContentResolver().insert(WineContentProvider.CONTENT_URI, values);
-        }
-        // otherwise just update the already-existing wine
-        else {
-          getContentResolver().update(WineContentProvider.CONTENT_URI, values,
-              WineTable.COLUMN_ID + "=" + wine.getId(), null);
-        }
+        // FIXME
       }
     }
   }

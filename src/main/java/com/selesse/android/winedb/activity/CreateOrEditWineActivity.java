@@ -2,7 +2,6 @@ package com.selesse.android.winedb.activity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -13,39 +12,31 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.selesse.android.winedb.R;
-import com.selesse.android.winedb.contentprovider.WineContentProvider;
+import com.selesse.android.winedb.database.WineDatabaseHandler;
+import com.selesse.android.winedb.database.WineTable;
 import com.selesse.android.winedb.model.Wine;
-import com.selesse.android.winedb.model.Wine.WineColor;
+import com.selesse.android.winedb.model.WineColor;
 
 public class CreateOrEditWineActivity extends Activity {
 
-  Wine wine = null;
+  WineTable wine = new WineTable();
   EditText barcodeText, nameText, countryText, yearText, descText, ratingText, priceText,
       commentText, imageText;
   Spinner spinner;
   boolean editMode = false;
-
-  private Uri wineUri;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     Bundle bundle = this.getIntent().getExtras();
 
     if (savedInstanceState != null) {
-      wineUri = (Uri) savedInstanceState.getParcelable(WineContentProvider.CONTENT_ITEM_TYPE);
-      wine = WineContentProvider.getWineFromUri(wineUri, getContentResolver());
+      wine.id = savedInstanceState.getLong("id");
     }
     if (bundle != null) {
       editMode = true;
-      wine = (Wine) bundle.getSerializable("wine");
-      wineUri = (Uri) bundle.getParcelable(WineContentProvider.CONTENT_ITEM_TYPE);
+      wine.id = bundle.getLong("id");
 
-      if (wineUri == null) {
-        wineUri = Uri.parse(WineContentProvider.CONTENT_URI + "/" + wine.getId());
-      }
-      if (wine == null) {
-        wine = WineContentProvider.getWineFromUri(wineUri, getContentResolver());
-      }
+      wine = WineDatabaseHandler.getInstance(this).getWine(wine.id);
     }
 
     super.onCreate(savedInstanceState);
@@ -63,7 +54,7 @@ public class CreateOrEditWineActivity extends Activity {
 
     spinner = (Spinner) findViewById(R.id.wineColorSpinner);
     ArrayAdapter<WineColor> spinnerArrayAdapter = new ArrayAdapter<WineColor>(this,
-        android.R.layout.simple_spinner_item, Wine.WineColor.values());
+        android.R.layout.simple_spinner_item, WineColor.values());
     spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     spinner.setAdapter(spinnerArrayAdapter);
 
@@ -159,7 +150,7 @@ public class CreateOrEditWineActivity extends Activity {
         }
 
         Intent data = new Intent();
-        data.putExtra("wine", wine);
+        data.putExtra("id", wine.getId());
         setResult(RESULT_OK, data);
         finish();
       }
@@ -171,7 +162,7 @@ public class CreateOrEditWineActivity extends Activity {
   protected void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
 
-    outState.putParcelable(WineContentProvider.CONTENT_ITEM_TYPE, wineUri);
+    outState.putLong("id", wine.id);
   }
 
 }

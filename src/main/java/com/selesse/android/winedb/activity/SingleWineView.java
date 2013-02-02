@@ -7,12 +7,10 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -20,13 +18,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.selesse.android.winedb.R;
-import com.selesse.android.winedb.contentprovider.WineContentProvider;
-import com.selesse.android.winedb.database.sqlite.WineTable;
+import com.selesse.android.winedb.database.WineDatabaseHandler;
+import com.selesse.android.winedb.database.WineTable;
 import com.selesse.android.winedb.model.RequestCode;
-import com.selesse.android.winedb.model.Wine;
+import com.selesse.android.winedb.model.WineColor;
 
 public class SingleWineView extends Activity {
-  Wine wine = null;
+  WineTable wine = new WineTable();
   TextView nameText = null;
   TextView countryText = null;
   TextView yearText = null;
@@ -37,21 +35,18 @@ public class SingleWineView extends Activity {
   TextView commentText = null;
   ImageView image = null;
 
-  private Uri wineUri;
-
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     Bundle extras = this.getIntent().getExtras();
 
     if (savedInstanceState != null) {
-      wineUri = (Uri) savedInstanceState.getParcelable(WineContentProvider.CONTENT_ITEM_TYPE);
+      wine.id = (Long) savedInstanceState.get("id");
     }
     if (extras != null) {
-      wineUri = (Uri) extras.getParcelable(WineContentProvider.CONTENT_ITEM_TYPE);
+      wine.id = extras.getLong("id");
     }
-
-    if (wineUri != null) {
-      wine = WineContentProvider.getWineFromUri(wineUri, getContentResolver());
+    if (wine.id > 0) {
+      wine = WineDatabaseHandler.getInstance(this).getWine(wine.id);
     }
 
     super.onCreate(savedInstanceState);
@@ -73,17 +68,17 @@ public class SingleWineView extends Activity {
       @Override
       public void onClick(View v) {
         Intent intent = new Intent(getBaseContext(), CreateOrEditWineActivity.class);
-        intent.putExtra("wine", wine);
+        intent.putExtra("id", wine.id);
         startActivityForResult(intent, RequestCode.EDIT_WINE.ordinal());
       }
     });
 
-    updateView(WineContentProvider.getWineFromUri(wineUri, getContentResolver()));
+    updateView(wine);
   }
 
-  private void updateView(Wine wine) {
+  private void updateView(WineTable wine) {
 
-    if (wine.getName() != null && !wine.getName().equals("")) {
+    if (!wine.getName().equals("")) {
       nameText.setText(wine.getName());
     }
     if (wine.getCountry() != null && !wine.getCountry().equals("")) {
@@ -92,7 +87,7 @@ public class SingleWineView extends Activity {
     if (wine.getYear() > 1500) {
       yearText.setText(String.valueOf(wine.getYear()));
     }
-    if (wine.getColor() != Wine.WineColor.UNKNOWN) {
+    if (wine.getColor() != WineColor.UNKNOWN) {
       colorText.setText(wine.getColor().toString());
     }
     if (wine.getDescription() != null && !wine.getDescription().equals("")) {
@@ -131,21 +126,8 @@ public class SingleWineView extends Activity {
     super.onActivityResult(requestCode, resultCode, data);
 
     if (requestCode == RequestCode.EDIT_WINE.ordinal() && resultCode == Activity.RESULT_OK) {
-      Bundle bundle = data.getExtras();
-      wine = (Wine) bundle.get("wine");
-
-      ContentValues values = WineContentProvider.getContentValuesFromWine(wine);
-
-      // if it doesn't yet have an id, give it one
-      if (wine.getId() == 0) {
-        getContentResolver().insert(WineContentProvider.CONTENT_URI, values);
-      }
-      // otherwise just update the already-existing wine
-      else {
-        getContentResolver().update(WineContentProvider.CONTENT_URI, values,
-            WineTable.COLUMN_ID + "=" + wine.getId(), null);
-      }
-
+      // FIXME
+      
       updateView(wine);
     }
   }
