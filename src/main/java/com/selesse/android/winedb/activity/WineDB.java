@@ -3,30 +3,22 @@ package com.selesse.android.winedb.activity;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.LoaderManager;
 import android.app.ProgressDialog;
-import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.Loader;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.Button;
-import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
-import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockListActivity;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -34,43 +26,39 @@ import com.google.zxing.integration.android.IntentResult;
 import com.selesse.android.winedb.R;
 import com.selesse.android.winedb.contentprovider.WineContentProvider;
 import com.selesse.android.winedb.database.Wine;
-import com.selesse.android.winedb.database.WineDatabaseHandler;
 import com.selesse.android.winedb.model.RequestCode;
 import com.selesse.android.winedb.model.WineContextMenu;
 import com.selesse.android.winedb.winescraper.WineScrapers;
 
-@TargetApi(Build.VERSION_CODES.HONEYCOMB)
-public class WineDB extends SherlockListActivity implements LoaderManager.LoaderCallbacks<Cursor> {
-
-  private Cursor cursor;
-  private SimpleCursorAdapter adapter;
-  private static final String[] PROJECTION = new String[] {
-      Wine.COLUMN_ID,
-      Wine.COLUMN_NAME,
-      Wine.COLUMN_COLOR };
-  private static final int LOADER_ID = 0;
-  private LoaderManager.LoaderCallbacks<Cursor> callBacks;
+public class WineDB extends SherlockFragmentActivity {
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.main);
 
+    if (findViewById(R.id.fragment_container) != null) {
+
+      // However, if we're being restored from a previous state,
+      // then we don't need to do anything and should return or else
+      // we could end up with overlapping fragments.
+      if (savedInstanceState != null) {
+        return;
+      }
+
+      // Create an instance of ExampleFragment
+      WineListFragment firstFragment = new WineListFragment();
+
+      // In case this activity was started with special instructions from an Intent,
+      // pass the Intent's extras to the fragment as arguments
+      firstFragment.setArguments(getIntent().getExtras());
+
+      // Add the fragment to the 'fragment_container' FrameLayout
+      getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, firstFragment)
+          .commit();
+    }
+    
     final Activity activity = this;
-
-    String[] from = { Wine.COLUMN_NAME, Wine.COLUMN_COLOR };
-    int[] to = { R.id.name, R.id.wine_color };
-
-    adapter = new SimpleCursorAdapter(this, R.layout.rows, cursor, from, to, 0);
-
-    setListAdapter(adapter);
-
-    callBacks = this;
-
-    LoaderManager lm = getLoaderManager();
-    lm.initLoader(LOADER_ID, null, callBacks);
-
-    registerForContextMenu(getListView());
 
     // part responsible for launching zxing intent
     final Button scan = (Button) findViewById(R.id.scan);
@@ -78,20 +66,11 @@ public class WineDB extends SherlockListActivity implements LoaderManager.Loader
 
       @Override
       public void onClick(View v) {
+        Toast.makeText(activity, "Hello world!", Toast.LENGTH_LONG).show();
         IntentIntegrator integrator = new IntentIntegrator(activity);
         integrator.initiateScan();
       }
     });
-
-  }
-
-  @Override
-  protected void onListItemClick(ListView l, View v, int position, long id) {
-    super.onListItemClick(l, v, position, id);
-
-    Intent intent = new Intent(this, SingleWineView.class);
-    intent.putExtra("id", id);
-    startActivity(intent);
   }
 
   @Override
@@ -119,9 +98,6 @@ public class WineDB extends SherlockListActivity implements LoaderManager.Loader
         startCreateNewWineIntent(new Wine());
         return true;
       case R.id.sortBy:
-        if (cursor.getCount() == 0) {
-          Toast.makeText(getApplicationContext(), R.string.no_wines, Toast.LENGTH_SHORT).show();
-        }
         return true;
       default:
         return super.onOptionsItemSelected(item);
@@ -193,7 +169,7 @@ public class WineDB extends SherlockListActivity implements LoaderManager.Loader
   /**
    * Create an AsyncTask to go scrape wines for us. The real magic happens in
    * {@link WineScraperThread}.
-   *
+   * 
    * @param barcode
    *          The barcode of the wine we'll be scraping.
    */
@@ -244,23 +220,4 @@ public class WineDB extends SherlockListActivity implements LoaderManager.Loader
 
   }
 
-  @Override
-  public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-    return new CursorLoader(WineDB.this, WineContentProvider.CONTENT_URI, PROJECTION, null, null,
-        null);
-  }
-
-  @Override
-  public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-    switch (loader.getId()) {
-      case LOADER_ID:
-        adapter.swapCursor(cursor);
-        break;
-    }
-  }
-
-  @Override
-  public void onLoaderReset(Loader<Cursor> arg0) {
-    adapter.swapCursor(null);
-  }
 }

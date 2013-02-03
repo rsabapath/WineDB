@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">WineScanner</string>
+    <string name="app_name">WineDB</string>
     <string name="scan">Scan wine barcode</string>
     <string name="empty">No wines scanned yet.</string>
-    <string name="winescanner_wine">WineScanner Wine</string>
+    <string name="winescanner_wine">WineDB Wine</string>
     <string name="wine_name">Name</string>
     <string name="empty_string">" "</string>
     <string name="wine_barcode">Barcode</string>
