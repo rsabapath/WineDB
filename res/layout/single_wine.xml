@@ -7,14 +7,16 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:paddingBottom="5sp"
+        android:paddingLeft="10sp" >
 
         <TextView
             android:id="@+id/singleWineTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:paddingTop="10dp"
+            android:paddingTop="10sp"
             android:text="@string/winescanner_wine"
             android:textAppearance="?android:attr/textAppearanceLarge" >
         </TextView>
@@ -23,7 +25,6 @@
             android:id="@+id/name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="10dp"
             android:text="@string/wine_name"
             android:textAppearance="?android:attr/textAppearanceMedium" >
         </TextView>
@@ -32,6 +33,7 @@
             android:id="@+id/wineNameText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingLeft="10sp"
             android:text="@string/empty_string" >
         </TextView>
 
@@ -47,6 +49,7 @@
             android:id="@+id/countryText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingLeft="10sp"
             android:text="@string/empty_string" >
         </TextView>
 
@@ -62,6 +65,7 @@
             android:id="@+id/yearText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingLeft="10sp"
             android:text="@string/empty_string" >
         </TextView>
 
@@ -77,6 +81,7 @@
             android:id="@+id/colorText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingLeft="10sp"
             android:text="@string/empty_string" >
         </TextView>
 
@@ -92,6 +97,7 @@
             android:id="@+id/descText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingLeft="10sp"
             android:text="@string/empty_string" >
         </TextView>
 
@@ -107,6 +113,7 @@
             android:id="@+id/ratingText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingLeft="10sp"
             android:text="@string/empty_string" >
         </TextView>
 
@@ -122,6 +129,7 @@
             android:id="@+id/priceText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingLeft="10sp"
             android:text="@string/empty_string" >
         </TextView>
 
@@ -137,7 +145,8 @@
             android:id="@+id/commentText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingBottom="5dp"
+            android:paddingBottom="5sp"
+            android:paddingLeft="10sp"
             android:text="@string/empty_string" >
         </TextView>
 

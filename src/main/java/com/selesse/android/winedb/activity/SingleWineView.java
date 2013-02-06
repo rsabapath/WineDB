@@ -112,8 +112,8 @@ public class SingleWineView extends SherlockActivity {
     if (wine.getCountry() != null && !wine.getCountry().equals("")) {
       countryText.setText(wine.getCountry());
     }
-    if (wine.getYear() > 1500) {
-      yearText.setText(String.valueOf(wine.getYear()));
+    if (wine.getYear() != -1) {
+      yearText.setText("" + wine.getYear());
     }
     if (wine.getColor() != WineColor.UNKNOWN) {
       colorText.setText(wine.getColor().toString());
@@ -121,8 +121,8 @@ public class SingleWineView extends SherlockActivity {
     if (wine.getDescription() != null && !wine.getDescription().equals("")) {
       descText.setText(wine.getDescription());
     }
-    if (wine.getRating() > 0) {
-      ratingText.setText(String.valueOf(wine.getRating()));
+    if (wine.getRating() != -1) {
+      ratingText.setText("" + wine.getRating());
     }
     else {
       ratingText.setText("Unrated");

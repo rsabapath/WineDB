@@ -11,7 +11,7 @@
         android:title="@string/add_wine"/>
     <item
         android:id="@+id/sortBy"
-        android:showAsAction="ifRoom|withText"
+        android:showAsAction="collapseActionView"
         android:title="@string/sort_wines"/>
 
 </menu>
