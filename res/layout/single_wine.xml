@@ -1,175 +1,154 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <ScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
-
-            <TextView
-                android:id="@+id/singleWineTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:paddingTop="10dp"
-                android:text="@string/winescanner_wine"
-                android:textAppearance="?android:attr/textAppearanceLarge" >
-            </TextView>
-
-            <TextView
-                android:id="@+id/name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingTop="10dp"
-                android:text="@string/wine_name"
-                android:textAppearance="?android:attr/textAppearanceMedium" >
-            </TextView>
-
-            <TextView
-                android:id="@+id/wineNameText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/empty_string" >
-            </TextView>
-
-            <TextView
-                android:id="@+id/country"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/wine_country"
-                android:textAppearance="?android:attr/textAppearanceMedium" >
-            </TextView>
-
-            <TextView
-                android:id="@+id/countryText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/empty_string" >
-            </TextView>
-
-            <TextView
-                android:id="@+id/year"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/wine_year"
-                android:textAppearance="?android:attr/textAppearanceMedium" >
-            </TextView>
-
-            <TextView
-                android:id="@+id/yearText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/empty_string" >
-            </TextView>
-
-            <TextView
-                android:id="@+id/color"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/wine_color"
-                android:textAppearance="?android:attr/textAppearanceMedium" >
-            </TextView>
-
-            <TextView
-                android:id="@+id/colorText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/empty_string" >
-            </TextView>
-
-            <TextView
-                android:id="@+id/desc"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/wine_description"
-                android:textAppearance="?android:attr/textAppearanceMedium" >
-            </TextView>
-
-            <TextView
-                android:id="@+id/descText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/empty_string" >
-            </TextView>
-
-            <TextView
-                android:id="@+id/rating"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/wine_rating"
-                android:textAppearance="?android:attr/textAppearanceMedium" >
-            </TextView>
-
-            <TextView
-                android:id="@+id/ratingText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/empty_string" >
-            </TextView>
-
-            <TextView
-                android:id="@+id/price"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/wine_price"
-                android:textAppearance="?android:attr/textAppearanceMedium" >
-            </TextView>
-
-            <TextView
-                android:id="@+id/priceText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/empty_string" >
-            </TextView>
-
-            <TextView
-                android:id="@+id/comments"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/wine_personal_comments"
-                android:textAppearance="?android:attr/textAppearanceMedium" >
-            </TextView>
-
-            <TextView
-                android:id="@+id/commentText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingBottom="5dp"
-                android:text="@string/empty_string" >
-            </TextView>
-
-            <ImageView
-                android:id="@+id/image"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:contentDescription="@string/wine_picture_description"
-                android:paddingBottom="60dp"
-                android:scaleType="center" />
-        </LinearLayout>
-    </ScrollView>
-
-    <RelativeLayout
-        style="@android:style/ButtonBar"
+    <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_gravity="center_vertical|center_horizontal|center"
-        android:gravity="center_horizontal|center_vertical" >
+        android:orientation="vertical" >
 
-        <Button
-            android:id="@+id/editWine"
+        <TextView
+            android:id="@+id/singleWineTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/edit_wine_btn_text" >
-        </Button>
-    </RelativeLayout>
+            android:layout_gravity="center"
+            android:paddingTop="10dp"
+            android:text="@string/winescanner_wine"
+            android:textAppearance="?android:attr/textAppearanceLarge" >
+        </TextView>
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:text="@string/wine_name"
+            android:textAppearance="?android:attr/textAppearanceMedium" >
+        </TextView>
+
+        <TextView
+            android:id="@+id/wineNameText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/empty_string" >
+        </TextView>
+
+        <TextView
+            android:id="@+id/country"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/wine_country"
+            android:textAppearance="?android:attr/textAppearanceMedium" >
+        </TextView>
+
+        <TextView
+            android:id="@+id/countryText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/empty_string" >
+        </TextView>
+
+        <TextView
+            android:id="@+id/year"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/wine_year"
+            android:textAppearance="?android:attr/textAppearanceMedium" >
+        </TextView>
+
+        <TextView
+            android:id="@+id/yearText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/empty_string" >
+        </TextView>
+
+        <TextView
+            android:id="@+id/color"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/wine_color"
+            android:textAppearance="?android:attr/textAppearanceMedium" >
+        </TextView>
+
+        <TextView
+            android:id="@+id/colorText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/empty_string" >
+        </TextView>
+
+        <TextView
+            android:id="@+id/desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/wine_description"
+            android:textAppearance="?android:attr/textAppearanceMedium" >
+        </TextView>
+
+        <TextView
+            android:id="@+id/descText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/empty_string" >
+        </TextView>
+
+        <TextView
+            android:id="@+id/rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/wine_rating"
+            android:textAppearance="?android:attr/textAppearanceMedium" >
+        </TextView>
+
+        <TextView
+            android:id="@+id/ratingText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/empty_string" >
+        </TextView>
+
+        <TextView
+            android:id="@+id/price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/wine_price"
+            android:textAppearance="?android:attr/textAppearanceMedium" >
+        </TextView>
+
+        <TextView
+            android:id="@+id/priceText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/empty_string" >
+        </TextView>
+
+        <TextView
+            android:id="@+id/comments"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/wine_personal_comments"
+            android:textAppearance="?android:attr/textAppearanceMedium" >
+        </TextView>
+
+        <TextView
+            android:id="@+id/commentText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="5dp"
+            android:text="@string/empty_string" >
+        </TextView>
+
+        <ImageView
+            android:id="@+id/image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:contentDescription="@string/wine_picture_description"
+            android:paddingBottom="60dp"
+            android:scaleType="center" />
+    </LinearLayout>
+
+</ScrollView>

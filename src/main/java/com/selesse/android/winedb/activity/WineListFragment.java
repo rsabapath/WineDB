@@ -31,16 +31,18 @@ public class WineListFragment extends ListFragment implements LoaderManager.Load
   public void onActivityCreated(Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
 
+    setEmptyText(getText(R.string.empty));
+
     String[] from = { Wine.COLUMN_NAME, Wine.COLUMN_COLOR };
     int[] to = { R.id.name, R.id.wine_color };
 
     adapter = new SimpleCursorAdapter(getActivity(), R.layout.rows, cursor, from, to, 0);
     callBacks = this;
-    
+
     LoaderManager lm = getActivity().getSupportLoaderManager();
     lm.initLoader(LOADER_ID, null, callBacks);
 
-    setListAdapter(adapter);
+    this.setListAdapter(adapter);
   }
 
   @Override

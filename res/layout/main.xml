@@ -5,26 +5,4 @@
     android:layout_height="wrap_content"
     android:orientation="vertical" >
 
-    <RelativeLayout
-        android:id="@+id/relativeLayout1"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true" >
-
-        <LinearLayout
-            style="@android:style/ButtonBar"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|center_horizontal|center"
-            android:gravity="center_vertical|center_horizontal"
-            android:orientation="horizontal" >
-
-            <Button
-                android:id="@+id/scan"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/scan" />
-        </LinearLayout>
-    </RelativeLayout>
-
 </RelativeLayout>

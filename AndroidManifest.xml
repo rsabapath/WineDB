@@ -47,12 +47,12 @@
         <activity
             android:name=".activity.SingleWineView"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
+            android:theme="@style/Theme.Sherlock" >
         </activity>
         <activity
             android:name="com.selesse.android.winedb.activity.CreateOrEditWineActivity"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
+            android:theme="@style/Theme.Sherlock" >
         </activity>
     </application>
 

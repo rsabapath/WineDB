@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/thumbnail"
         android:layout_toRightOf="@+id/thumbnail"
-        android:textSize="15dip"
+        android:textSize="15sp"
         android:textStyle="bold"
         android:typeface="sans" />
 
@@ -37,7 +37,7 @@
         android:layout_below="@id/name"
         android:layout_marginTop="1dip"
         android:layout_toRightOf="@+id/thumbnail"
-        android:textSize="10dip" />
+        android:textSize="10sp" />
 
     <TextView
         android:id="@+id/wine_color"
@@ -46,7 +46,7 @@
         android:layout_below="@id/country"
         android:layout_marginTop="1dip"
         android:layout_toRightOf="@+id/thumbnail"
-        android:textSize="10dip" />
+        android:textSize="10sp" />
 
     <TextView
         android:id="@+id/rating"
@@ -55,7 +55,7 @@
         android:layout_below="@id/country"
         android:layout_marginTop="1dip"
         android:layout_toRightOf="@+id/thumbnail"
-        android:textSize="10dip" />
+        android:textSize="10sp" />
 
     <TextView
         android:id="@+id/year"
@@ -65,7 +65,7 @@
         android:layout_alignTop="@id/name"
         android:layout_marginRight="5dip"
         android:gravity="right"
-        android:textSize="10dip"
+        android:textSize="10sp"
         android:textStyle="bold" />
 
 </RelativeLayout>

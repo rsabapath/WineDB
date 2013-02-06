@@ -7,23 +7,26 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
 import com.selesse.android.winedb.R;
 import com.selesse.android.winedb.database.Wine;
 import com.selesse.android.winedb.database.WineDatabaseHandler;
 import com.selesse.android.winedb.model.RequestCode;
 import com.selesse.android.winedb.model.WineColor;
 
-public class SingleWineView extends Activity {
+public class SingleWineView extends SherlockActivity {
   Wine wine = new Wine();
   TextView nameText = null;
   TextView countryText = null;
@@ -61,19 +64,44 @@ public class SingleWineView extends Activity {
     priceText = (TextView) findViewById(R.id.priceText);
     commentText = (TextView) findViewById(R.id.commentText);
     image = (ImageView) findViewById(R.id.image);
-    Button editButton = (Button) findViewById(R.id.editWine);
-    
-    updateView(wine);
-    
-    editButton.setOnClickListener(new View.OnClickListener() {
 
-      @Override
-      public void onClick(View v) {
+    updateView(wine);
+  }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    MenuInflater inflater = getSupportMenuInflater();
+    inflater.inflate(R.menu.single_wine, menu);
+    return true;
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
+    switch (item.getItemId()) {
+      case R.id.edit_wine_button:
         Intent intent = new Intent(getBaseContext(), CreateOrEditWineActivity.class);
         intent.putExtra("id", wine.getId());
         startActivityForResult(intent, RequestCode.EDIT_WINE.ordinal());
-      }
-    });
+        return true;
+      case R.id.delete_wine_button:
+        confirmDeleteDialog();
+        return true;
+      default:
+        return super.onOptionsItemSelected(item);
+    }
+  }
+
+  private void confirmDeleteDialog() {
+    new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert)
+        .setTitle(R.string.confirm_delete).setMessage(R.string.confirm_delete_message)
+        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+            WineDatabaseHandler.getInstance(getApplicationContext()).removeWine(wine);
+            finish();
+          }
+        }).setNegativeButton(R.string.no, null).show();
   }
 
   private void updateView(Wine wine) {

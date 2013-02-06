@@ -1,22 +1,22 @@
 package com.selesse.android.winedb.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
 import com.selesse.android.winedb.R;
 import com.selesse.android.winedb.database.Wine;
 import com.selesse.android.winedb.database.WineDatabaseHandler;
 import com.selesse.android.winedb.model.WineColor;
 
-public class CreateOrEditWineActivity extends Activity {
+public class CreateOrEditWineActivity extends SherlockActivity {
 
   Wine wine = new Wine();
   EditText barcodeText, nameText, countryText, yearText, descText, ratingText, priceText,
@@ -94,72 +94,84 @@ public class CreateOrEditWineActivity extends Activity {
         spinner.setSelection(wine.getColor().ordinal());
       }
     }
+  }
 
-    Button save = (Button) findViewById(R.id.saveWine);
-    save.setOnClickListener(new View.OnClickListener() {
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    MenuInflater inflater = getSupportMenuInflater();
+    inflater.inflate(R.menu.edit_wine, menu);
+    return true;
+  }
 
-      @Override
-      public void onClick(View v) {
+  @Override
+  public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
+    switch (item.getItemId()) {
+      case R.id.save_wine_button:
+        validateAndSave();
+        return true;
+      default:
+        return super.onOptionsItemSelected(item);
+    }
+  }
 
-        // make sure that if you're pressing save, you save a name
-        if (nameText.getText().toString().trim().length() == 0) {
-          Toast.makeText(getApplicationContext(), R.string.empty_name, Toast.LENGTH_SHORT).show();
-          nameText.setFocusableInTouchMode(true);
-          nameText.requestFocus();
+  private void validateAndSave() {
 
-          ScrollView scrollView = (ScrollView) findViewById(R.id.edit_wine_scrollview);
-          scrollView.scrollTo(0, 0);
-          return;
-        }
+    // make sure that if you're pressing save, you save a name
+    if (nameText.getText().toString().trim().length() == 0) {
+      Toast.makeText(getApplicationContext(), R.string.empty_name, Toast.LENGTH_SHORT).show();
+      nameText.setFocusableInTouchMode(true);
+      nameText.requestFocus();
 
-        if (barcodeText.getText().toString().length() > 0) {
-          wine.setBarcode(barcodeText.getText().toString());
-        }
+      ScrollView scrollView = (ScrollView) findViewById(R.id.edit_wine_scrollview);
+      scrollView.scrollTo(0, 0);
+      return;
+    }
 
-        if (nameText.getText().toString().length() > 0) {
-          wine.setName(nameText.getText().toString());
-        }
+    if (barcodeText.getText().toString().length() > 0) {
+      wine.setBarcode(barcodeText.getText().toString());
+    }
 
-        if (countryText.getText().toString().length() > 0) {
-          wine.setCountry(countryText.getText().toString());
-        }
+    if (nameText.getText().toString().length() > 0) {
+      wine.setName(nameText.getText().toString());
+    }
 
-        if (yearText.getText().toString().length() > 0) {
-          wine.setYear(Integer.parseInt(yearText.getText().toString()));
-        }
+    if (countryText.getText().toString().length() > 0) {
+      wine.setCountry(countryText.getText().toString());
+    }
 
-        if (descText.getText().toString().length() > 0) {
-          wine.setDescription(descText.getText().toString());
-        }
+    if (yearText.getText().toString().length() > 0) {
+      wine.setYear(Integer.parseInt(yearText.getText().toString()));
+    }
 
-        if (ratingText.getText().toString().length() > 0) {
-          wine.setRating(Integer.parseInt(ratingText.getText().toString()));
-        }
+    if (descText.getText().toString().length() > 0) {
+      wine.setDescription(descText.getText().toString());
+    }
 
-        if (priceText.getText().toString().length() > 0) {
-          wine.setPrice(priceText.getText().toString());
-        }
+    if (ratingText.getText().toString().length() > 0) {
+      wine.setRating(Integer.parseInt(ratingText.getText().toString()));
+    }
 
-        if (commentText.getText().toString().length() > 0) {
-          wine.setComment(commentText.getText().toString());
-        }
+    if (priceText.getText().toString().length() > 0) {
+      wine.setPrice(priceText.getText().toString());
+    }
 
-        if (imageText.getText().toString().length() > 0) {
-          wine.setImageURL(imageText.getText().toString());
-        }
+    if (commentText.getText().toString().length() > 0) {
+      wine.setComment(commentText.getText().toString());
+    }
 
-        if (spinner.getSelectedItemPosition() > 0) {
-          wine.setColor(WineColor.values()[spinner.getSelectedItemPosition()]);
-        }
+    if (imageText.getText().toString().length() > 0) {
+      wine.setImageURL(imageText.getText().toString());
+    }
 
-        WineDatabaseHandler.getInstance(getApplicationContext()).putWine(wine);
-        Intent data = new Intent();
-        data.putExtra("id", wine.getId());
-        setResult(RESULT_OK, data);
-        finish();
-      }
-    });
+    if (spinner.getSelectedItemPosition() > 0) {
+      wine.setColor(WineColor.values()[spinner.getSelectedItemPosition()]);
+    }
 
+    WineDatabaseHandler.getInstance(getApplicationContext()).putWine(wine);
+    Intent data = new Intent();
+    data.putExtra("id", wine.getId());
+    setResult(RESULT_OK, data);
+    finish();
   }
 
   @Override

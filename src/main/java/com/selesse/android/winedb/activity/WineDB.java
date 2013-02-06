@@ -14,9 +14,7 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.Button;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
@@ -39,38 +37,18 @@ public class WineDB extends SherlockFragmentActivity {
 
     if (findViewById(R.id.fragment_container) != null) {
 
-      // However, if we're being restored from a previous state,
-      // then we don't need to do anything and should return or else
-      // we could end up with overlapping fragments.
       if (savedInstanceState != null) {
         return;
       }
 
-      // Create an instance of ExampleFragment
       WineListFragment firstFragment = new WineListFragment();
 
-      // In case this activity was started with special instructions from an Intent,
-      // pass the Intent's extras to the fragment as arguments
       firstFragment.setArguments(getIntent().getExtras());
 
       // Add the fragment to the 'fragment_container' FrameLayout
       getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, firstFragment)
           .commit();
     }
-    
-    final Activity activity = this;
-
-    // part responsible for launching zxing intent
-    final Button scan = (Button) findViewById(R.id.scan);
-    scan.setOnClickListener(new View.OnClickListener() {
-
-      @Override
-      public void onClick(View v) {
-        Toast.makeText(activity, "Hello world!", Toast.LENGTH_LONG).show();
-        IntentIntegrator integrator = new IntentIntegrator(activity);
-        integrator.initiateScan();
-      }
-    });
   }
 
   @Override
@@ -94,6 +72,10 @@ public class WineDB extends SherlockFragmentActivity {
   @Override
   public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
     switch (item.getItemId()) {
+      case R.id.scan:
+        IntentIntegrator integrator = new IntentIntegrator(this);
+        integrator.initiateScan();
+        return true;
       case R.id.add_wine:
         startCreateNewWineIntent(new Wine());
         return true;
