@@ -39,8 +39,8 @@ public class WineDatabaseHandler extends SQLiteOpenHelper {
 
   public synchronized Wine getWine(final long id) {
     final SQLiteDatabase db = this.getReadableDatabase();
-    final Cursor cursor = db.query(Wine.TABLE_WINES, Wine.FIELDS, Wine.COLUMN_ID
-        + " IS ?", new String[] { String.valueOf(id) }, null, null, null, null);
+    final Cursor cursor = db.query(Wine.TABLE_WINES, Wine.FIELDS, Wine.COLUMN_ID + " IS ?",
+        new String[] { String.valueOf(id) }, null, null, null, null);
     if (cursor == null || cursor.isAfterLast()) {
       return null;
     }

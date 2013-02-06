@@ -44,8 +44,8 @@ public class WineContentProvider extends ContentProvider {
           rowsDeleted = sqlDB.delete(Wine.TABLE_WINES, Wine.COLUMN_ID + "=" + id, null);
         }
         else {
-          rowsDeleted = sqlDB.delete(Wine.TABLE_WINES, Wine.COLUMN_ID + "=" + id
-              + " and " + selection, selectionArgs);
+          rowsDeleted = sqlDB.delete(Wine.TABLE_WINES, Wine.COLUMN_ID + "=" + id + " and "
+              + selection, selectionArgs);
         }
         break;
       default:
@@ -120,12 +120,11 @@ public class WineContentProvider extends ContentProvider {
       case WINE_ID:
         String id = uri.getLastPathSegment();
         if (TextUtils.isEmpty(selection)) {
-          rowsUpdated = sqlDB.update(Wine.TABLE_WINES, values, Wine.COLUMN_ID + "=" + id,
-              null);
+          rowsUpdated = sqlDB.update(Wine.TABLE_WINES, values, Wine.COLUMN_ID + "=" + id, null);
         }
         else {
-          rowsUpdated = sqlDB.update(Wine.TABLE_WINES, values, Wine.COLUMN_ID + "=" + id
-              + " and " + selection, selectionArgs);
+          rowsUpdated = sqlDB.update(Wine.TABLE_WINES, values, Wine.COLUMN_ID + "=" + id + " and "
+              + selection, selectionArgs);
         }
         break;
       default:

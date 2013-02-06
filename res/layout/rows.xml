@@ -32,7 +32,7 @@
 
     <TextView
         android:id="@+id/country"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/name"
         android:layout_marginTop="1dip"
@@ -52,7 +52,7 @@
         android:id="@+id/rating"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/country"
+        android:layout_below="@id/wine_color"
         android:layout_marginTop="1dip"
         android:layout_toRightOf="@+id/thumbnail"
         android:textSize="10sp" />

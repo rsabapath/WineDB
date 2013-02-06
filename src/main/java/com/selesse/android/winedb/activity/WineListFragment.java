@@ -8,12 +8,15 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.support.v4.widget.SimpleCursorAdapter.ViewBinder;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.selesse.android.winedb.R;
 import com.selesse.android.winedb.contentprovider.WineContentProvider;
 import com.selesse.android.winedb.database.Wine;
+import com.selesse.android.winedb.database.WinesDataSource;
 
 public class WineListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -33,12 +36,32 @@ public class WineListFragment extends ListFragment implements LoaderManager.Load
 
     setEmptyText(getText(R.string.empty));
 
-    String[] from = { Wine.COLUMN_NAME, Wine.COLUMN_COLOR };
-    int[] to = { R.id.name, R.id.wine_color };
+    String[] from = {
+        Wine.COLUMN_NAME,
+        Wine.COLUMN_COUNTRY,
+        Wine.COLUMN_COLOR,
+        Wine.COLUMN_RATING,
+        Wine.COLUMN_YEAR };
+    int[] to = { R.id.name, R.id.country, R.id.wine_color, R.id.rating, R.id.year };
 
     adapter = new SimpleCursorAdapter(getActivity(), R.layout.rows, cursor, from, to, 0);
-    callBacks = this;
+    adapter.setViewBinder(new ViewBinder() {
 
+      @Override
+      public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
+        if (WinesDataSource.isNumericColumn(columnIndex)) {
+          if (cursor.getInt(columnIndex) == -1) {
+            TextView textView = (TextView) view;
+            textView.setText("");
+            return true;
+          }
+        }
+        return false;
+      }
+
+    });
+
+    callBacks = this;
     LoaderManager lm = getActivity().getSupportLoaderManager();
     lm.initLoader(LOADER_ID, null, callBacks);
 

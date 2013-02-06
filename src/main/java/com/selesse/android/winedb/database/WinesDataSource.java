@@ -60,8 +60,8 @@ public class WinesDataSource {
 
     long insertId = db.insert(Wine.TABLE_WINES, null, values);
 
-    Cursor cursor = db.query(Wine.TABLE_WINES, allColumns, Wine.COLUMN_ID + " = "
-        + insertId, null, null, null, null);
+    Cursor cursor = db.query(Wine.TABLE_WINES, allColumns, Wine.COLUMN_ID + " = " + insertId, null,
+        null, null, null);
     cursor.moveToFirst();
     Wine newWine = cursorToWine(cursor);
     cursor.close();
@@ -119,6 +119,17 @@ public class WinesDataSource {
     Cursor cursor = db.query(Wine.TABLE_WINES, allColumns, null, null, null, null, null);
 
     return cursor;
+  }
+
+  /**
+   * Tells you whether or not the value of the column is numeric.
+   *
+   * @param index
+   *          The index of the cursor's column.
+   * @return True if the Cursor's column index is numeric.
+   */
+  public static boolean isNumericColumn(int index) {
+    return index == 1 || index == 3 || index == 9;
   }
 
 }

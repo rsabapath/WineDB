@@ -151,7 +151,7 @@ public class WineDB extends SherlockFragmentActivity {
   /**
    * Create an AsyncTask to go scrape wines for us. The real magic happens in
    * {@link WineScraperThread}.
-   * 
+   *
    * @param barcode
    *          The barcode of the wine we'll be scraping.
    */
