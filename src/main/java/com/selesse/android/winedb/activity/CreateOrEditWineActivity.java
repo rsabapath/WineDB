@@ -1,7 +1,10 @@
 package com.selesse.android.winedb.activity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ScrollView;
@@ -61,38 +64,35 @@ public class CreateOrEditWineActivity extends SherlockActivity {
     spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     spinner.setAdapter(spinnerArrayAdapter);
 
-    // if we're in edit mode, go through all the fields - if they're valid, display them
-    if (editMode) {
-      if (!wine.getBarcode().equals("")) {
-        barcodeText.setText(wine.getBarcode());
-      }
-      if (!wine.getName().equals("")) {
-        nameText.setText(wine.getName());
-      }
-      if (!wine.getCountry().equals("")) {
-        countryText.setText(wine.getCountry());
-      }
-      if (wine.getYear() > 0 && wine.getYear() < 2500) {
-        yearText.setText(String.valueOf(wine.getYear()));
-      }
-      if (!wine.getDescription().equals("")) {
-        descText.setText(wine.getDescription());
-      }
-      if (wine.getRating() > 0 && wine.getRating() < 11) {
-        ratingText.setText(String.valueOf(wine.getRating()));
-      }
-      if (!wine.getPrice().equals("")) {
-        priceText.setText(wine.getPrice());
-      }
-      if (!wine.getComment().equals("")) {
-        commentText.setText(wine.getComment());
-      }
-      if (!wine.getImageURL().equals("")) {
-        imageText.setText(wine.getImageURL());
-      }
-      if (wine.getColor() != WineColor.UNKNOWN) {
-        spinner.setSelection(wine.getColor().ordinal());
-      }
+    if (!wine.getBarcode().equals("")) {
+      barcodeText.setText(wine.getBarcode());
+    }
+    if (!wine.getName().equals("")) {
+      nameText.setText(wine.getName());
+    }
+    if (!wine.getCountry().equals("")) {
+      countryText.setText(wine.getCountry());
+    }
+    if (wine.getYear() > 0 && wine.getYear() < 2500) {
+      yearText.setText(String.valueOf(wine.getYear()));
+    }
+    if (!wine.getDescription().equals("")) {
+      descText.setText(wine.getDescription());
+    }
+    if (wine.getRating() > 0 && wine.getRating() < 11) {
+      ratingText.setText(String.valueOf(wine.getRating()));
+    }
+    if (!wine.getPrice().equals("")) {
+      priceText.setText(wine.getPrice());
+    }
+    if (!wine.getComment().equals("")) {
+      commentText.setText(wine.getComment());
+    }
+    if (!wine.getImageURL().equals("")) {
+      imageText.setText(wine.getImageURL());
+    }
+    if (wine.getColor() != WineColor.UNKNOWN) {
+      spinner.setSelection(wine.getColor().ordinal());
     }
   }
 
@@ -101,6 +101,28 @@ public class CreateOrEditWineActivity extends SherlockActivity {
     MenuInflater inflater = getSupportMenuInflater();
     inflater.inflate(R.menu.edit_wine, menu);
     return true;
+  }
+
+  @Override
+  public boolean onKeyDown(int keyCode, KeyEvent event) {
+    if (keyCode == KeyEvent.KEYCODE_BACK) {
+      new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert)
+          .setMessage(R.string.save_before_exit)
+          .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+              validateAndSave();
+            }
+          }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+              finish();
+            }
+
+          }).show();
+    }
+    return super.onKeyDown(keyCode, event);
   }
 
   @Override
@@ -115,13 +137,13 @@ public class CreateOrEditWineActivity extends SherlockActivity {
   }
 
   private void validateAndSave() {
-
     // make sure that if you're pressing save, you save a name
     if (nameText.getText().toString().trim().length() == 0) {
       Toast.makeText(getApplicationContext(), R.string.empty_name, Toast.LENGTH_SHORT).show();
       nameText.setFocusableInTouchMode(true);
       nameText.requestFocus();
 
+      // scroll back up to highlight the field in question
       ScrollView scrollView = (ScrollView) findViewById(R.id.edit_wine_scrollview);
       scrollView.scrollTo(0, 0);
       return;

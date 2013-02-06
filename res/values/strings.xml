@@ -33,5 +33,6 @@
     <string name="no">No</string>
     <string name="confirm_delete">Delete this wine?</string>
     <string name="confirm_delete_message">Are you sure you want to delete this wine?</string>
+    <string name="save_before_exit">Save before exiting?</string>
 
 </resources>
