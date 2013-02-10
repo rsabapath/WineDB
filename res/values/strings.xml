@@ -20,19 +20,21 @@
     <string name="edit_wine_button_text">Edit</string>
     <string name="delete_wine_button_text">Delete</string>
     <string name="save_wine_button_text">Save</string>
-    <string name="generic_placeholder_wine_bottle_picture_">Generic placeholder wine bottle picture.</string>
     <string name="picture_of_the_wine">Picture of the wine.</string>
     <string name="wine_color_label">Wine color</string>
     <string name="add_wine">Add wine</string>
     <string name="sort_wines">Sort by</string>
-    <string name="help">Help</string>
     <string name="empty_name">Your wine name cannot be empty!</string>
     <string name="scraping">Querying wine databases </string>
-    <string name="no_wines">Add some wines first!</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="confirm_delete">Delete this wine?</string>
     <string name="confirm_delete_message">Are you sure you want to delete this wine?</string>
     <string name="save_before_exit">Save before exiting?</string>
+    <string name="wine_color_red">Red</string>
+    <string name="wine_color_white">White</string>
+    <string name="wine_color_rose">Rose</string>
+    <string name="wine_color_port">Port</string>
+    <string name="wine_color_sparkling">Sparkling</string>
 
 </resources>

@@ -195,4 +195,19 @@ public class Wine implements Serializable {
     this.color = color;
   }
 
+  /**
+   * Tells you whether or not the value of columnIndex is numeric in nature.
+   * 
+   * @param columnIndex
+   *          The DB column index of the wine.
+   * @return Whether or not columnIndex is numeric.
+   */
+  public static boolean isNumericColumn(int columnIndex) {
+    return columnIndex == 1 || columnIndex == 3 || columnIndex == 9;
+  }
+
+  public static boolean isColor(int columnIndex) {
+    return columnIndex == 10;
+  }
+
 }

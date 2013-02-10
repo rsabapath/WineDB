@@ -16,7 +16,9 @@ import android.widget.TextView;
 import com.selesse.android.winedb.R;
 import com.selesse.android.winedb.contentprovider.WineContentProvider;
 import com.selesse.android.winedb.database.Wine;
-import com.selesse.android.winedb.database.WinesDataSource;
+import com.selesse.android.winedb.database.WineDatabaseHandler;
+import com.selesse.android.winedb.model.SortOrder;
+import com.selesse.android.winedb.model.WineColor;
 
 public class WineListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -28,6 +30,7 @@ public class WineListFragment extends ListFragment implements LoaderManager.Load
       Wine.COLUMN_NAME,
       Wine.COLUMN_COLOR };
   private static final int LOADER_ID = 0;
+  public static final String TAG = WineListFragment.class.getName();
   private LoaderManager.LoaderCallbacks<Cursor> callBacks;
 
   @Override
@@ -49,12 +52,18 @@ public class WineListFragment extends ListFragment implements LoaderManager.Load
 
       @Override
       public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
-        if (WinesDataSource.isNumericColumn(columnIndex)) {
+        // Some columns (i.e. rating) may have -1 as a default DB value - don't show these
+        if (Wine.isNumericColumn(columnIndex)) {
           if (cursor.getInt(columnIndex) == -1) {
             TextView textView = (TextView) view;
             textView.setText("");
             return true;
           }
+        }
+        else if (Wine.isColor(columnIndex)) {
+          TextView textView = (TextView) view;
+          textView.setText(WineColor.getLocalizedString(getActivity().getApplicationContext(), cursor.getString(columnIndex)));
+          return true;
         }
         return false;
       }
@@ -66,6 +75,11 @@ public class WineListFragment extends ListFragment implements LoaderManager.Load
     lm.initLoader(LOADER_ID, null, callBacks);
 
     this.setListAdapter(adapter);
+  }
+
+  public void sortBy(String option) {
+    WineDatabaseHandler db = WineDatabaseHandler.getInstance(getActivity());
+    adapter.changeCursor(db.sortBy(option, SortOrder.DESCENDING));
   }
 
   @Override

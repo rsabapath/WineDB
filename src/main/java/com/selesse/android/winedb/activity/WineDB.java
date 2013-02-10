@@ -46,8 +46,8 @@ public class WineDB extends SherlockFragmentActivity {
       firstFragment.setArguments(getIntent().getExtras());
 
       // Add the fragment to the 'fragment_container' FrameLayout
-      getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, firstFragment)
-          .commit();
+      getSupportFragmentManager().beginTransaction()
+          .add(R.id.fragment_container, firstFragment, WineListFragment.TAG).commit();
     }
   }
 
@@ -66,7 +66,7 @@ public class WineDB extends SherlockFragmentActivity {
   public boolean onCreateOptionsMenu(Menu menu) {
     MenuInflater inflater = getSupportMenuInflater();
     inflater.inflate(R.menu.main_activity, menu);
-    return true;
+    return super.onCreateOptionsMenu(menu);
   }
 
   @Override
@@ -80,11 +80,18 @@ public class WineDB extends SherlockFragmentActivity {
         startCreateNewWineIntent(new Wine());
         return true;
       case R.id.sortBy:
+        queryUserForSortOption();
         return true;
       default:
         return super.onOptionsItemSelected(item);
     }
 
+  }
+
+  private void queryUserForSortOption() {
+    final WineListFragment fragment = (WineListFragment) getSupportFragmentManager()
+        .findFragmentByTag(WineListFragment.TAG);
+    fragment.sortBy(Wine.COLUMN_COLOR);
   }
 
   @Override
@@ -151,7 +158,7 @@ public class WineDB extends SherlockFragmentActivity {
   /**
    * Create an AsyncTask to go scrape wines for us. The real magic happens in
    * {@link WineScraperThread}.
-   *
+   * 
    * @param barcode
    *          The barcode of the wine we'll be scraping.
    */

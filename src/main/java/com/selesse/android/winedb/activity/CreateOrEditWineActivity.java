@@ -59,8 +59,10 @@ public class CreateOrEditWineActivity extends SherlockActivity {
     imageText = (EditText) findViewById(R.id.imageEditText);
 
     spinner = (Spinner) findViewById(R.id.wineColorSpinner);
-    ArrayAdapter<WineColor> spinnerArrayAdapter = new ArrayAdapter<WineColor>(this,
-        android.R.layout.simple_spinner_item, WineColor.values());
+
+    ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this,
+        android.R.layout.simple_spinner_item,
+        WineColor.getLocalizedStrings(getApplicationContext()));
     spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     spinner.setAdapter(spinnerArrayAdapter);
 
@@ -73,12 +75,14 @@ public class CreateOrEditWineActivity extends SherlockActivity {
     if (!wine.getCountry().equals("")) {
       countryText.setText(wine.getCountry());
     }
+    // TODO input validation (not here)
     if (wine.getYear() > 0 && wine.getYear() < 2500) {
       yearText.setText(String.valueOf(wine.getYear()));
     }
     if (!wine.getDescription().equals("")) {
       descText.setText(wine.getDescription());
     }
+    // TODO input validation (not here)
     if (wine.getRating() > 0 && wine.getRating() < 11) {
       ratingText.setText(String.valueOf(wine.getRating()));
     }

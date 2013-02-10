@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.selesse.android.winedb.contentprovider.WineContentProvider;
+import com.selesse.android.winedb.model.SortOrder;
 
 public class WineDatabaseHandler extends SQLiteOpenHelper {
 
@@ -78,7 +79,7 @@ public class WineDatabaseHandler extends SQLiteOpenHelper {
     }
 
     if (success) {
-      notifyProviderOnPersonChange();
+      notifyProviderOnWineChange();
     }
 
     return success;
@@ -90,13 +91,28 @@ public class WineDatabaseHandler extends SQLiteOpenHelper {
         new String[] { Long.toString(wine.getId()) });
 
     if (result > 0) {
-      notifyProviderOnPersonChange();
+      notifyProviderOnWineChange();
     }
     return result;
   }
 
-  private void notifyProviderOnPersonChange() {
+  private void notifyProviderOnWineChange() {
     context.getContentResolver().notifyChange(WineContentProvider.CONTENT_URI, null, false);
   }
 
+  public Cursor sortBy(String option) {
+    return sortBy(option, SortOrder.ASCENDING);
+  }
+
+  public Cursor sortBy(String option, SortOrder order) {
+    return rawReadQuery(null, null, null, null, option + " " + order);
+  }
+
+  private Cursor rawReadQuery(String selection, String[] selectionArgs, String groupBy,
+      String having, String orderBy) {
+    Cursor cursor = getReadableDatabase().query(Wine.TABLE_WINES, Wine.FIELDS, selection,
+        selectionArgs, groupBy, having, orderBy);
+
+    return cursor;
+  }
 }
