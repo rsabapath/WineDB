@@ -116,8 +116,8 @@ public class SingleWineView extends SherlockActivity {
       yearText.setText("" + wine.getYear());
     }
     if (wine.getColor() != WineColor.UNKNOWN) {
-      colorText.setText(WineColor.getLocalizedString(getApplicationContext(), wine.getColor()
-          .toString()));
+      colorText.setText(WineColor.getLocalizedString(getApplicationContext().getResources(), wine
+          .getColor().toString()));
     }
     if (wine.getDescription() != null && !wine.getDescription().equals("")) {
       descText.setText(wine.getDescription());

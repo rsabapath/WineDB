@@ -3,7 +3,6 @@ package com.selesse.android.winedb.model;
 import java.util.Arrays;
 import java.util.List;
 
-import android.content.Context;
 import android.content.res.Resources;
 
 import com.selesse.android.winedb.R;
@@ -27,8 +26,7 @@ public enum WineColor {
     return name;
   }
 
-  public static List<String> getLocalizedStrings(Context context) {
-    Resources res = context.getResources();
+  public static List<String> getLocalizedStrings(Resources res) {
     String red = res.getString(R.string.wine_color_red);
     String white = res.getString(R.string.wine_color_white);
     String rose = res.getString(R.string.wine_color_rose);
@@ -38,8 +36,7 @@ public enum WineColor {
     return Arrays.asList("", red, white, rose, port, sparkling);
   }
 
-  public static String getLocalizedString(Context context, String string) {
-    Resources res = context.getResources();
+  public static String getLocalizedString(Resources res, String string) {
     if (string.equals("")) {
       return "";
     }

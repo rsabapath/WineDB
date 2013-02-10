@@ -89,9 +89,10 @@ public class WineDB extends SherlockFragmentActivity {
   }
 
   private void queryUserForSortOption() {
-    final WineListFragment fragment = (WineListFragment) getSupportFragmentManager()
-        .findFragmentByTag(WineListFragment.TAG);
-    fragment.sortBy(Wine.COLUMN_COLOR);
+//    final WineListFragment fragment = (WineListFragment) getSupportFragmentManager()
+//        .findFragmentByTag(WineListFragment.TAG);
+//    SpinnerAdapter spinnerAdapter = ArrayAdapter.createFromResource(this, R.array.sort_by,
+//        android.R.layout.simple_spinner_dropdown_item);
   }
 
   @Override

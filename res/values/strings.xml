@@ -5,8 +5,8 @@
     <string name="scan">Scan barcode</string>
     <string name="empty">Your WineDB is empty. Scan some wines!</string>
     <string name="winescanner_wine">WineDB Wine</string>
+    <string name="empty_string"></string>
     <string name="wine_name">Name</string>
-    <string name="empty_string">" "</string>
     <string name="wine_barcode">Barcode</string>
     <string name="wine_country">Country</string>
     <string name="wine_year">Year</string>

@@ -1,12 +1,16 @@
 package com.selesse.android.winedb.database;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 import android.content.ContentValues;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.selesse.android.winedb.R;
 import com.selesse.android.winedb.model.WineColor;
 
 public class Wine implements Serializable {
@@ -208,6 +212,16 @@ public class Wine implements Serializable {
 
   public static boolean isColor(int columnIndex) {
     return columnIndex == 10;
+  }
+
+  public static List<String> getLocalizedSortStrings(Resources resources) {
+    String name = resources.getString(R.string.wine_name);
+    String rating = resources.getString(R.string.wine_rating);
+    String year = resources.getString(R.string.wine_year);
+    String country = resources.getString(R.string.wine_country);
+    String color = resources.getString(R.string.wine_color);
+    String price = resources.getString(R.string.wine_price);
+    return Arrays.asList(name, rating, year, country, color, price);
   }
 
 }

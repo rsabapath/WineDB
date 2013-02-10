@@ -62,7 +62,8 @@ public class WineListFragment extends ListFragment implements LoaderManager.Load
         }
         else if (Wine.isColor(columnIndex)) {
           TextView textView = (TextView) view;
-          textView.setText(WineColor.getLocalizedString(getActivity().getApplicationContext(), cursor.getString(columnIndex)));
+          textView.setText(WineColor.getLocalizedString(getActivity().getApplicationContext()
+              .getResources(), cursor.getString(columnIndex)));
           return true;
         }
         return false;
