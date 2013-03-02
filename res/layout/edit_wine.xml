@@ -47,7 +47,7 @@
             android:id="@+id/nameEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textCapWords" >
+            android:inputType="textCapWords|textNoSuggestions" >
 
             <requestFocus />
         </EditText>
@@ -122,7 +122,7 @@
             android:id="@+id/descEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textMultiLine" >
+            android:inputType="textMultiLine|textCapSentences" >
         </EditText>
 
         <TextView
@@ -152,7 +152,7 @@
             android:id="@+id/commentEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textMultiLine" >
+            android:inputType="textMultiLine|textCapSentences" >
         </EditText>
 
         <TextView
