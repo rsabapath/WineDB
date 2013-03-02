@@ -87,7 +87,7 @@ public class WineDB extends SherlockFragmentActivity {
         integrator.initiateScan();
         return true;
       case R.id.add_wine:
-        startCreateNewWineIntent(new Wine());
+        startEditWineIntent(new Wine());
         return true;
       case R.id.export_database:
         startExportDatabase();
@@ -142,17 +142,26 @@ public class WineDB extends SherlockFragmentActivity {
 
       // we'll only use the scrapers if it looks like it'll match approximately match UPC
       if (Pattern.matches("[0-9]{1,13}", barcode)) {
-        scrapeWinesAndEditWine(barcode);
+        // first, check to see if we already have this barcode in our database.
+        // if we do, we edit that wine; otherwise we scrape and create
+
+        Wine wine = WineDatabaseHandler.getInstance(this).getWineByBarcode(barcode);
+        if (wine == null) {
+          scrapeWinesAndEditWine(barcode);
+        }
+        else {
+          startEditWineIntent(wine);
+        }
       }
       else {
         Wine wine = new Wine();
         wine.setBarcode(barcode);
-        startCreateNewWineIntent(wine);
+        startEditWineIntent(wine);
       }
     }
   }
 
-  public void startCreateNewWineIntent(Wine wine) {
+  public void startEditWineIntent(Wine wine) {
     Intent editIntent = new Intent(this, CreateOrEditWineActivity.class);
     Bundle extras = new Bundle();
     extras.putLong("id", wine.getId());
@@ -210,7 +219,7 @@ public class WineDB extends SherlockFragmentActivity {
         wine = result.get(0);
       }
 
-      startCreateNewWineIntent(wine);
+      startEditWineIntent(wine);
     }
   }
 

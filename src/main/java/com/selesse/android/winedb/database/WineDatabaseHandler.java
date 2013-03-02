@@ -62,6 +62,23 @@ public class WineDatabaseHandler extends SQLiteOpenHelper {
     return item;
   }
 
+  public synchronized Wine getWineByBarcode(String barcode) {
+    final SQLiteDatabase db = this.getReadableDatabase();
+    final Cursor cursor = db.query(Wine.TABLE_WINES, Wine.FIELDS, Wine.COLUMN_BARCODE + " IS ?",
+        new String[] { barcode }, null, null, null, null);
+
+    if (cursor == null || cursor.isAfterLast()) {
+      return null;
+    }
+
+    Wine item = null;
+    if (cursor.moveToFirst()) {
+      item = new Wine(cursor);
+    }
+    cursor.close();
+    return item;
+  }
+
   public synchronized boolean putWine(final Wine wine) {
     boolean success = false;
     int result = 0;
