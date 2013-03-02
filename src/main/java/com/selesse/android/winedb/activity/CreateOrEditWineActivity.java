@@ -153,41 +153,25 @@ public class CreateOrEditWineActivity extends SherlockActivity {
       return;
     }
 
-    if (barcodeText.getText().toString().trim().length() > 0) {
-      wine.setBarcode(barcodeText.getText().toString());
-    }
-
-    if (nameText.getText().toString().trim().length() > 0) {
-      wine.setName(nameText.getText().toString());
-    }
-
-    if (countryText.getText().toString().trim().length() > 0) {
-      wine.setCountry(countryText.getText().toString());
-    }
-
+    wine.setBarcode(barcodeText.getText().toString());
+    wine.setName(nameText.getText().toString());
+    wine.setCountry(countryText.getText().toString());
     if (yearText.getText().toString().trim().length() > 0) {
       wine.setYear(Integer.parseInt(yearText.getText().toString()));
     }
-
-    if (descText.getText().toString().trim().length() > 0) {
-      wine.setDescription(descText.getText().toString());
+    else {
+      wine.setYear(-1);
     }
-
+    wine.setDescription(descText.getText().toString());
     if (ratingText.getText().toString().trim().length() > 0) {
       wine.setRating(Integer.parseInt(ratingText.getText().toString()));
     }
-
-    if (priceText.getText().toString().trim().length() > 0) {
-      wine.setPrice(priceText.getText().toString());
+    else {
+      wine.setRating(-1);
     }
-
-    if (commentText.getText().toString().trim().length() > 0) {
-      wine.setComment(commentText.getText().toString());
-    }
-
-    if (imageText.getText().toString().trim().length() > 0) {
-      wine.setImageURL(imageText.getText().toString());
-    }
+    wine.setPrice(priceText.getText().toString());
+    wine.setComment(commentText.getText().toString());
+    wine.setImageURL(imageText.getText().toString());
 
     if (spinner.getSelectedItemPosition() > 0) {
       wine.setColor(WineColor.values()[spinner.getSelectedItemPosition()]);

@@ -106,32 +106,27 @@ public class SingleWineView extends SherlockActivity {
 
   private void updateView(Wine wine) {
 
-    if (!wine.getName().equals("")) {
-      nameText.setText(wine.getName());
-    }
-    if (wine.getCountry() != null && !wine.getCountry().equals("")) {
-      countryText.setText(wine.getCountry());
-    }
+    nameText.setText(wine.getName());
+    countryText.setText(wine.getCountry());
     if (wine.getYear() != -1) {
       yearText.setText("" + wine.getYear());
+    }
+    else {
+      yearText.setText("");
     }
     if (wine.getColor() != WineColor.UNKNOWN) {
       colorText.setText(WineColor.getLocalizedString(getApplicationContext().getResources(), wine
           .getColor().toString()));
     }
-    if (wine.getDescription() != null && !wine.getDescription().equals("")) {
-      descText.setText(wine.getDescription());
-    }
+    descText.setText(wine.getDescription());
     if (wine.getRating() != -1) {
       ratingText.setText("" + wine.getRating());
     }
     else {
       ratingText.setText("Unrated");
     }
-    if (!wine.getPrice().equals("")) {
-      priceText.setText(wine.getPrice());
-    }
-    if (wine.getComment() != null && !wine.getComment().equals("")) {
+    priceText.setText(wine.getPrice());
+    if (!wine.getComment().equals("")) {
       commentText.setText(wine.getComment());
     }
     else {

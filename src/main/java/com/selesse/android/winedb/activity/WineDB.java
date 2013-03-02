@@ -47,7 +47,6 @@ public class WineDB extends SherlockFragmentActivity {
     setContentView(R.layout.main);
 
     if (findViewById(R.id.fragment_container) != null) {
-
       if (savedInstanceState != null) {
         return;
       }
@@ -99,128 +98,6 @@ public class WineDB extends SherlockFragmentActivity {
       default:
         return super.onOptionsItemSelected(item);
     }
-
-  }
-
-  private void startImportDatabase() {
-    AlertDialog.Builder alert = new AlertDialog.Builder(this);
-    alert.setTitle(R.string.import_dialog_title);
-    alert.setMessage(R.string.import_dialog_message);
-
-    // Set an EditText view to get user input
-    final EditText input = new EditText(this);
-    input.setText(Environment.getExternalStorageDirectory().getPath() + "/winedb.bak");
-    input.setInputType(~(InputType.TYPE_TEXT_FLAG_AUTO_CORRECT));
-    alert.setView(input);
-
-    alert.setPositiveButton("Import", new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialog, int whichButton) {
-        String value = input.getText().toString();
-        final File importLocation = new File(value);
-        if (importLocation.exists()) {
-          importWineDatabase(importLocation);
-        }
-        else {
-          showExportError(getString(R.string.import_file_not_found));
-        }
-      }
-    }).setNegativeButton("Cancel", null);
-
-    alert.show();
-  }
-
-  private void importWineDatabase(File importLocation) {
-    try {
-      WineDatabaseHandler handler = WineDatabaseHandler.getInstance(this);
-      handler.importDatabase(importLocation.getPath());
-      handler.refresh();
-    }
-    catch (FileNotFoundException e) {
-      showExportError(getString(R.string.import_error));
-    }
-    catch (IOException e) {
-      showExportError(getString(R.string.import_error));
-    }
-  }
-
-  private void startExportDatabase() {
-    AlertDialog.Builder alert = new AlertDialog.Builder(this);
-    alert.setTitle(R.string.export_dialog_title);
-    alert.setMessage(R.string.export_dialog_message);
-
-    // Set an EditText view to get user input
-    final EditText input = new EditText(this);
-    input.setText(Environment.getExternalStorageDirectory().getPath() + "/winedb.bak");
-    input.setInputType(~(InputType.TYPE_TEXT_FLAG_AUTO_CORRECT));
-    alert.setView(input);
-
-    if (!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-      showExportError(getString(R.string.sd_card_not_mounted));
-    }
-
-    if (!Environment.getExternalStorageDirectory().canWrite()) {
-      showExportError(getString(R.string.export_dialog_no_write));
-      return;
-    }
-
-    alert.setPositiveButton("Export", new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialog, int whichButton) {
-        String value = input.getText().toString();
-        final File exportLocation = new File(value);
-        if (exportLocation.exists()) {
-          createConfirmExportDialog(exportLocation);
-        }
-        else {
-          exportWineDatabase(exportLocation);
-        }
-      }
-    });
-
-    alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialog, int whichButton) {
-        // do nothing
-      }
-    });
-
-    alert.show();
-  }
-
-  protected void createConfirmExportDialog(final File exportLocation) {
-    AlertDialog.Builder confirm = new AlertDialog.Builder(this);
-    DialogInterface.OnClickListener dialogListener = new OnClickListener() {
-
-      @Override
-      public void onClick(DialogInterface dialog, int which) {
-        if (which == DialogInterface.BUTTON_POSITIVE) {
-          exportWineDatabase(exportLocation);
-        }
-      }
-    };
-    confirm.setTitle(R.string.confirm);
-    confirm.setMessage(R.string.export_overwrite_file);
-
-    confirm.setPositiveButton("Yes", dialogListener).setNegativeButton("No", dialogListener).show();
-  }
-
-  private void exportWineDatabase(File exportLocation) {
-    try {
-      WineDatabaseHandler handler = WineDatabaseHandler.getInstance(this);
-      handler.exportDatabase(exportLocation.getPath());
-      Toast.makeText(this, R.string.export_success, Toast.LENGTH_SHORT).show();
-    }
-    catch (FileNotFoundException e) {
-      showExportError(getString(R.string.export_dialog_no_database));
-    }
-    catch (IOException e) {
-      showExportError(getString(R.string.export_error));
-    }
-  }
-
-  private void showExportError(String errorString) {
-    Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_LONG).show();
   }
 
   @Override
@@ -335,7 +212,127 @@ public class WineDB extends SherlockFragmentActivity {
 
       startCreateNewWineIntent(wine);
     }
+  }
 
+  private void startImportDatabase() {
+    AlertDialog.Builder alert = new AlertDialog.Builder(this);
+    alert.setTitle(R.string.import_dialog_title);
+    alert.setMessage(R.string.import_dialog_message);
+
+    // Set an EditText view to get user input
+    final EditText input = new EditText(this);
+    input.setText(Environment.getExternalStorageDirectory().getPath() + "/winedb.bak");
+    input.setInputType(~(InputType.TYPE_TEXT_FLAG_AUTO_CORRECT));
+    alert.setView(input);
+
+    alert.setPositiveButton("Import", new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int whichButton) {
+        String value = input.getText().toString();
+        final File importLocation = new File(value);
+        if (importLocation.exists()) {
+          importWineDatabase(importLocation);
+        }
+        else {
+          showExportError(getString(R.string.import_file_not_found));
+        }
+      }
+    }).setNegativeButton("Cancel", null);
+
+    alert.show();
+  }
+
+  private void importWineDatabase(File importLocation) {
+    try {
+      WineDatabaseHandler handler = WineDatabaseHandler.getInstance(this);
+      handler.importDatabase(importLocation.getPath());
+      handler.refresh();
+    }
+    catch (FileNotFoundException e) {
+      showExportError(getString(R.string.import_error));
+    }
+    catch (IOException e) {
+      showExportError(getString(R.string.import_error));
+    }
+  }
+
+  private void startExportDatabase() {
+    AlertDialog.Builder alert = new AlertDialog.Builder(this);
+    alert.setTitle(R.string.export_dialog_title);
+    alert.setMessage(R.string.export_dialog_message);
+
+    // Set an EditText view to get user input
+    final EditText input = new EditText(this);
+    input.setText(Environment.getExternalStorageDirectory().getPath() + "/winedb.bak");
+    input.setInputType(~(InputType.TYPE_TEXT_FLAG_AUTO_CORRECT));
+    alert.setView(input);
+
+    if (!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+      showExportError(getString(R.string.sd_card_not_mounted));
+    }
+
+    if (!Environment.getExternalStorageDirectory().canWrite()) {
+      showExportError(getString(R.string.export_dialog_no_write));
+      return;
+    }
+
+    alert.setPositiveButton("Export", new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int whichButton) {
+        String value = input.getText().toString();
+        final File exportLocation = new File(value);
+        if (exportLocation.exists()) {
+          createConfirmExportDialog(exportLocation);
+        }
+        else {
+          exportWineDatabase(exportLocation);
+        }
+      }
+    });
+
+    alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int whichButton) {
+        // do nothing
+      }
+    });
+
+    alert.show();
+  }
+
+  private void createConfirmExportDialog(final File exportLocation) {
+    AlertDialog.Builder confirm = new AlertDialog.Builder(this);
+    DialogInterface.OnClickListener dialogListener = new OnClickListener() {
+
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        if (which == DialogInterface.BUTTON_POSITIVE) {
+          exportWineDatabase(exportLocation);
+        }
+      }
+    };
+    confirm.setTitle(R.string.confirm);
+    confirm.setMessage(R.string.export_overwrite_file);
+
+    confirm.setPositiveButton("Yes", dialogListener).setNegativeButton("No", dialogListener).show();
+  }
+
+  private void exportWineDatabase(File exportLocation) {
+    try {
+      WineDatabaseHandler handler = WineDatabaseHandler.getInstance(this);
+      handler.exportDatabase(exportLocation.getPath());
+      Toast.makeText(this, R.string.export_success, Toast.LENGTH_SHORT).show();
+    }
+    catch (FileNotFoundException e) {
+      showExportError(getString(R.string.export_dialog_no_database));
+    }
+    catch (IOException e) {
+      showExportError(getString(R.string.export_error));
+    }
+  }
+
+  private void showExportError(String errorString) {
+    Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_LONG).show();
   }
 
 }
