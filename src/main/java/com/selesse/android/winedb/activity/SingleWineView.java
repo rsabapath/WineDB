@@ -123,14 +123,14 @@ public class SingleWineView extends SherlockActivity {
       ratingText.setText("" + wine.getRating());
     }
     else {
-      ratingText.setText("Unrated");
+      ratingText.setText(getString(R.string.unrated));
     }
     priceText.setText(wine.getPrice());
     if (!wine.getComment().equals("")) {
       commentText.setText(wine.getComment());
     }
     else {
-      commentText.setText("No comments yet.");
+      commentText.setText(getString(R.string.not_yet_commented));
     }
 
     if (wine.getImageURL() != null && wine.getImageURL().startsWith("http")) {

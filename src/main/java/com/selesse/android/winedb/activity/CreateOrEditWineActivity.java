@@ -22,6 +22,7 @@ import com.selesse.android.winedb.model.WineColor;
 public class CreateOrEditWineActivity extends SherlockActivity {
 
   Wine wine = new Wine();
+  Wine originalWine = new Wine();
   EditText barcodeText, nameText, countryText, yearText, descText, ratingText, priceText,
       commentText, imageText;
   Spinner spinner;
@@ -44,6 +45,7 @@ public class CreateOrEditWineActivity extends SherlockActivity {
         wine = WineDatabaseHandler.getInstance(this).getWine(wine.getId());
       }
     }
+    originalWine = new Wine(wine);
 
     super.onCreate(savedInstanceState);
     setContentView(R.layout.edit_wine);
@@ -110,23 +112,28 @@ public class CreateOrEditWineActivity extends SherlockActivity {
   @Override
   public boolean onKeyDown(int keyCode, KeyEvent event) {
     if (keyCode == KeyEvent.KEYCODE_BACK) {
-      new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert)
-          .setMessage(R.string.save_before_exit)
-          .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-              validateAndSave();
-            }
-          }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-              finish();
-            }
-
-          }).show();
+      if (wineHasBeenModified()) {
+        new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert)
+            .setMessage(R.string.save_before_exit)
+            .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+              @Override
+              public void onClick(DialogInterface dialog, int which) {
+                validateAndSave();
+              }
+            }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+              @Override
+              public void onClick(DialogInterface dialog, int which) {
+                finish();
+              }
+            }).show();
+      }
     }
     return super.onKeyDown(keyCode, event);
+  }
+
+  private boolean wineHasBeenModified() {
+    saveFields(wine);
+    return !wine.equals(originalWine);
   }
 
   @Override
@@ -153,6 +160,16 @@ public class CreateOrEditWineActivity extends SherlockActivity {
       return;
     }
 
+    saveFields(wine);
+
+    WineDatabaseHandler.getInstance(getApplicationContext()).putWine(wine);
+    Intent data = new Intent();
+    data.putExtra("id", wine.getId());
+    setResult(RESULT_OK, data);
+    finish();
+  }
+
+  private void saveFields(Wine wine) {
     wine.setBarcode(barcodeText.getText().toString());
     wine.setName(nameText.getText().toString());
     wine.setCountry(countryText.getText().toString());
@@ -176,12 +193,6 @@ public class CreateOrEditWineActivity extends SherlockActivity {
     if (spinner.getSelectedItemPosition() > 0) {
       wine.setColor(WineColor.values()[spinner.getSelectedItemPosition()]);
     }
-
-    WineDatabaseHandler.getInstance(getApplicationContext()).putWine(wine);
-    Intent data = new Intent();
-    data.putExtra("id", wine.getId());
-    setResult(RESULT_OK, data);
-    finish();
   }
 
   @Override

@@ -142,9 +142,8 @@ public class WineDB extends SherlockFragmentActivity {
 
       // we'll only use the scrapers if it looks like it'll match approximately match UPC
       if (Pattern.matches("[0-9]{1,13}", barcode)) {
-        // first, check to see if we already have this barcode in our database.
+        // check to see if we already have this barcode in our database...
         // if we do, we edit that wine; otherwise we scrape and create
-
         Wine wine = WineDatabaseHandler.getInstance(this).getWineByBarcode(barcode);
         if (wine == null) {
           scrapeWinesAndEditWine(barcode);

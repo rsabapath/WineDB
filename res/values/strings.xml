@@ -51,5 +51,7 @@
     <string name="wine_color_rose">Rose</string>
     <string name="wine_color_port">Port</string>
     <string name="wine_color_sparkling">Sparkling</string>
+    <string name="unrated">Unrated.</string>
+    <string name="not_yet_commented">No comment specified.</string>
 
 </resources>
