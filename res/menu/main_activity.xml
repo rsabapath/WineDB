@@ -10,8 +10,12 @@
         android:showAsAction="ifRoom|withText"
         android:title="@string/add_wine"/>
     <item
-        android:id="@+id/sortBy"
+        android:id="@+id/import_database"
         android:showAsAction="collapseActionView"
-        android:title="@string/sort_wines"/>
+        android:title="@string/import_database"/>
+    <item
+        android:id="@+id/export_database"
+        android:showAsAction="collapseActionView"
+        android:title="@string/export_database"/>
 
 </menu>

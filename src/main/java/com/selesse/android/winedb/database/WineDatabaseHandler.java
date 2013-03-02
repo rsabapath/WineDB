@@ -159,4 +159,8 @@ public class WineDatabaseHandler extends SQLiteOpenHelper {
   public String getDatabasePath() {
     return DB_PATH;
   }
+
+  public void refresh() {
+    notifyProviderOnWineChange();
+  }
 }

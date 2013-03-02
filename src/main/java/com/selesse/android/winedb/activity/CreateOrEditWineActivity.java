@@ -61,8 +61,8 @@ public class CreateOrEditWineActivity extends SherlockActivity {
     spinner = (Spinner) findViewById(R.id.wineColorSpinner);
 
     ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this,
-        android.R.layout.simple_spinner_item,
-        WineColor.getLocalizedStrings(getApplicationContext().getResources()));
+        android.R.layout.simple_spinner_item, WineColor.getLocalizedStrings(getApplicationContext()
+            .getResources()));
     spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     spinner.setAdapter(spinnerArrayAdapter);
 

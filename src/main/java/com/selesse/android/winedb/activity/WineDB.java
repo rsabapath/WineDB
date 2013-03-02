@@ -1,20 +1,29 @@
 package com.selesse.android.winedb.activity;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 import java.util.regex.Pattern;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
@@ -24,6 +33,7 @@ import com.google.zxing.integration.android.IntentResult;
 import com.selesse.android.winedb.R;
 import com.selesse.android.winedb.contentprovider.WineContentProvider;
 import com.selesse.android.winedb.database.Wine;
+import com.selesse.android.winedb.database.WineDatabaseHandler;
 import com.selesse.android.winedb.model.RequestCode;
 import com.selesse.android.winedb.model.WineContextMenu;
 import com.selesse.android.winedb.winescraper.WineScrapers;
@@ -79,8 +89,11 @@ public class WineDB extends SherlockFragmentActivity {
       case R.id.add_wine:
         startCreateNewWineIntent(new Wine());
         return true;
-      case R.id.sortBy:
-        queryUserForSortOption();
+      case R.id.export_database:
+        startExportDatabase();
+        return true;
+      case R.id.import_database:
+        startImportDatabase();
         return true;
       default:
         return super.onOptionsItemSelected(item);
@@ -88,11 +101,122 @@ public class WineDB extends SherlockFragmentActivity {
 
   }
 
-  private void queryUserForSortOption() {
-    // final WineListFragment fragment = (WineListFragment) getSupportFragmentManager()
-    // .findFragmentByTag(WineListFragment.TAG);
-    // SpinnerAdapter spinnerAdapter = ArrayAdapter.createFromResource(this, R.array.sort_by,
-    // android.R.layout.simple_spinner_dropdown_item);
+  private void startImportDatabase() {
+    AlertDialog.Builder alert = new AlertDialog.Builder(this);
+    alert.setTitle(R.string.import_dialog_title);
+    alert.setMessage(R.string.import_dialog_message);
+
+    // Set an EditText view to get user input
+    final EditText input = new EditText(this);
+    input.setText(Environment.getExternalStorageDirectory().getPath() + "/winedb.bak");
+    alert.setView(input);
+
+    alert.setPositiveButton("Import", new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int whichButton) {
+        String value = input.getText().toString();
+        final File importLocation = new File(value);
+        if (importLocation.exists()) {
+          importWineDatabase(importLocation);
+        }
+        else {
+          showExportError(getString(R.string.import_file_not_found));
+        }
+      }
+    });
+
+    alert.show();
+  }
+
+  protected void importWineDatabase(File importLocation) {
+    try {
+      WineDatabaseHandler handler = WineDatabaseHandler.getInstance(this);
+      handler.importDatabase(importLocation.getPath());
+      handler.refresh();
+    }
+    catch (FileNotFoundException e) {
+      showExportError(getString(R.string.import_error));
+    }
+    catch (IOException e) {
+      showExportError(getString(R.string.import_error));
+    }
+  }
+
+  private void startExportDatabase() {
+    AlertDialog.Builder alert = new AlertDialog.Builder(this);
+    alert.setTitle(R.string.export_dialog_title);
+    alert.setMessage(R.string.export_dialog_message);
+
+    // Set an EditText view to get user input
+    final EditText input = new EditText(this);
+    input.setText(Environment.getExternalStorageDirectory().getPath() + "/winedb.bak");
+    alert.setView(input);
+
+    if (!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+      showExportError(getString(R.string.sd_card_not_mounted));
+    }
+
+    if (!Environment.getExternalStorageDirectory().canWrite()) {
+      showExportError(getString(R.string.export_dialog_no_write));
+      return;
+    }
+
+    alert.setPositiveButton("Export", new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int whichButton) {
+        String value = input.getText().toString();
+        final File exportLocation = new File(value);
+        if (exportLocation.exists()) {
+          createConfirmExportDialog(exportLocation);
+        }
+        else {
+          exportWineDatabase(exportLocation);
+        }
+      }
+    });
+
+    alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int whichButton) {
+        // do nothing
+      }
+    });
+
+    alert.show();
+  }
+
+  protected void createConfirmExportDialog(final File exportLocation) {
+    AlertDialog.Builder confirm = new AlertDialog.Builder(this);
+    DialogInterface.OnClickListener dialogListener = new OnClickListener() {
+
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        if (which == DialogInterface.BUTTON_POSITIVE) {
+          exportWineDatabase(exportLocation);
+        }
+      }
+    };
+    confirm.setTitle(R.string.confirm);
+    confirm.setMessage(R.string.export_overwrite_file);
+
+    confirm.setPositiveButton("Yes", dialogListener).setNegativeButton("No", dialogListener).show();
+  }
+
+  private void exportWineDatabase(File exportLocation) {
+    try {
+      WineDatabaseHandler handler = WineDatabaseHandler.getInstance(this);
+      handler.exportDatabase(exportLocation.getPath());
+    }
+    catch (FileNotFoundException e) {
+      showExportError(getString(R.string.export_dialog_no_database));
+    }
+    catch (IOException e) {
+      showExportError(getString(R.string.export_error));
+    }
+  }
+
+  private void showExportError(String errorString) {
+    Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_LONG).show();
   }
 
   @Override
