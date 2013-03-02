@@ -16,6 +16,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.InputType;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem;
@@ -109,6 +110,7 @@ public class WineDB extends SherlockFragmentActivity {
     // Set an EditText view to get user input
     final EditText input = new EditText(this);
     input.setText(Environment.getExternalStorageDirectory().getPath() + "/winedb.bak");
+    input.setInputType(~(InputType.TYPE_TEXT_FLAG_AUTO_CORRECT));
     alert.setView(input);
 
     alert.setPositiveButton("Import", new DialogInterface.OnClickListener() {
@@ -123,12 +125,12 @@ public class WineDB extends SherlockFragmentActivity {
           showExportError(getString(R.string.import_file_not_found));
         }
       }
-    });
+    }).setNegativeButton("Cancel", null);
 
     alert.show();
   }
 
-  protected void importWineDatabase(File importLocation) {
+  private void importWineDatabase(File importLocation) {
     try {
       WineDatabaseHandler handler = WineDatabaseHandler.getInstance(this);
       handler.importDatabase(importLocation.getPath());
@@ -150,6 +152,7 @@ public class WineDB extends SherlockFragmentActivity {
     // Set an EditText view to get user input
     final EditText input = new EditText(this);
     input.setText(Environment.getExternalStorageDirectory().getPath() + "/winedb.bak");
+    input.setInputType(~(InputType.TYPE_TEXT_FLAG_AUTO_CORRECT));
     alert.setView(input);
 
     if (!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
@@ -206,6 +209,7 @@ public class WineDB extends SherlockFragmentActivity {
     try {
       WineDatabaseHandler handler = WineDatabaseHandler.getInstance(this);
       handler.exportDatabase(exportLocation.getPath());
+      Toast.makeText(this, R.string.export_success, Toast.LENGTH_SHORT).show();
     }
     catch (FileNotFoundException e) {
       showExportError(getString(R.string.export_dialog_no_database));
