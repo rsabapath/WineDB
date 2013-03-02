@@ -32,7 +32,7 @@ public enum WineColor {
     String rose = res.getString(R.string.wine_color_rose);
     String port = res.getString(R.string.wine_color_port);
     String sparkling = res.getString(R.string.wine_color_sparkling);
-    
+
     return Arrays.asList("", red, white, rose, port, sparkling);
   }
 

@@ -201,7 +201,7 @@ public class Wine implements Serializable {
 
   /**
    * Tells you whether or not the value of columnIndex is numeric in nature.
-   * 
+   *
    * @param columnIndex
    *          The DB column index of the wine.
    * @return Whether or not columnIndex is numeric.

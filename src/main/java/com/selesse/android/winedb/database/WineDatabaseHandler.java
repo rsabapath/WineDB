@@ -1,5 +1,10 @@
 package com.selesse.android.winedb.database;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -20,12 +25,14 @@ public class WineDatabaseHandler extends SQLiteOpenHelper {
   }
 
   private static final String DATABASE_NAME = "wines.db";
+  private String DB_PATH;
   private static final int DATABASE_VERSION = 1;
   private Context context;
 
   public WineDatabaseHandler(Context context) {
     super(context, DATABASE_NAME, null, DATABASE_VERSION);
     this.context = context;
+    this.DB_PATH = context.getApplicationInfo().dataDir + "/databases/" + DATABASE_NAME;
   }
 
   @Override
@@ -114,5 +121,42 @@ public class WineDatabaseHandler extends SQLiteOpenHelper {
         selectionArgs, groupBy, having, orderBy);
 
     return cursor;
+  }
+
+  /**
+   * Copies the database file at the specified location over the current internal application
+   * database.
+   * */
+  public boolean importDatabase(String dbPath) throws IOException {
+    // Close the SQLiteOpenHelper so it will commit the created empty
+    // database to internal storage.
+    close();
+    File importedDatabase = new File(dbPath);
+    File currentDatabase = new File(DB_PATH);
+    if (importedDatabase.exists()) {
+      FileUtils.copyFile(new FileInputStream(importedDatabase), new FileOutputStream(
+          currentDatabase));
+      // Access the copied database so SQLiteHelper will cache it and mark it as created.
+      getWritableDatabase().close();
+      return true;
+    }
+    return false;
+  }
+
+  public boolean exportDatabase(String exportPath) throws IOException {
+    File database = new File(DB_PATH);
+    if (database.exists()) {
+      File exportDatabase = new File(exportPath);
+      if (!exportDatabase.canWrite()) {
+        return false;
+      }
+      FileUtils.copyFile(new FileInputStream(database), new FileOutputStream(exportDatabase));
+      return true;
+    }
+    return false;
+  }
+
+  public String getDatabasePath() {
+    return DB_PATH;
   }
 }

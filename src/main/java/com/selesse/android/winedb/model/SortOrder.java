@@ -10,6 +10,7 @@ public enum SortOrder {
     this.order = order;
   }
 
+  @Override
   public String toString() {
     return order;
   }

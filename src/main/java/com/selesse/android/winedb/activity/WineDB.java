@@ -89,10 +89,10 @@ public class WineDB extends SherlockFragmentActivity {
   }
 
   private void queryUserForSortOption() {
-//    final WineListFragment fragment = (WineListFragment) getSupportFragmentManager()
-//        .findFragmentByTag(WineListFragment.TAG);
-//    SpinnerAdapter spinnerAdapter = ArrayAdapter.createFromResource(this, R.array.sort_by,
-//        android.R.layout.simple_spinner_dropdown_item);
+    // final WineListFragment fragment = (WineListFragment) getSupportFragmentManager()
+    // .findFragmentByTag(WineListFragment.TAG);
+    // SpinnerAdapter spinnerAdapter = ArrayAdapter.createFromResource(this, R.array.sort_by,
+    // android.R.layout.simple_spinner_dropdown_item);
   }
 
   @Override
@@ -159,7 +159,7 @@ public class WineDB extends SherlockFragmentActivity {
   /**
    * Create an AsyncTask to go scrape wines for us. The real magic happens in
    * {@link WineScraperThread}.
-   * 
+   *
    * @param barcode
    *          The barcode of the wine we'll be scraping.
    */
