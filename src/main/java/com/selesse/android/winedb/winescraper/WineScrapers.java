@@ -5,6 +5,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.selesse.android.winedb.database.Wine;
 import com.selesse.android.winedb.winescraper.impl.GoogleShopperWineScraper;
+import com.selesse.android.winedb.winescraper.impl.UPCDatabaseOrgWineScraper;
 import com.selesse.android.winedb.winescraper.impl.UPCDatabaseWineScraper;
 
 /**
@@ -20,8 +21,9 @@ public class WineScrapers {
   public WineScrapers(String barcode) {
     WineScraper googleWineScraper = new GoogleShopperWineScraper(barcode);
     UPCDatabaseWineScraper upcScraper = new UPCDatabaseWineScraper(barcode);
+    UPCDatabaseOrgWineScraper upcOrgScraper = new UPCDatabaseOrgWineScraper(barcode);
 
-    this.wineScrapers = Lists.newArrayList(googleWineScraper, upcScraper);
+    this.wineScrapers = Lists.newArrayList(googleWineScraper, upcScraper, upcOrgScraper);
   }
 
   public List<Wine> scrape() {

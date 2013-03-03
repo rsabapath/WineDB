@@ -208,16 +208,15 @@ public class WineDB extends SherlockFragmentActivity {
       super.onPostExecute(result);
       progress.dismiss();
 
-      Wine wine = null;
+      Wine wine;
       if (result.size() == 0) {
         wine = new Wine();
-        wine.setBarcode(barcode);
       }
       // for now we'll just grab the first result, we can do something more sophisticated later
       else {
         wine = result.get(0);
       }
-
+      wine.setBarcode(barcode);
       startEditWineIntent(wine);
     }
   }
